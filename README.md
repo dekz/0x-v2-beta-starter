@@ -4,7 +4,9 @@ As a number of the internal packages are not published for v2 yet, it requires a
 
 This project will run against both a local [ganache](https://truffleframework.com/ganache) and the 0x v2 Kovan deployment.
 
-Steps:
+![cli](https://user-images.githubusercontent.com/27389/42074402-6dcc5ccc-7baf-11e8-84f1-9a27f1a96b08.png)
+
+## Getting Started
 
 Clone the 0x-monorepo locally, checkout to the v2-prototype branch, install dependencies and build packages.
 
@@ -54,6 +56,8 @@ Run this example in another terminal:
 node lib/scenarios/fill_order.js
 ```
 
+### Switching to Kovan
+
 To switch between Kovan/ganache uncomment the appropriate lines in `src/constants.ts` and re-build. Ganache is enabled by default.
 
 For Ganache:
@@ -73,6 +77,3 @@ export const RPC_URL = KOVAN_RPC;
 export const NETWORK_ID = KOVAN_NETWORK_ID;
 export const TX_DEFAULTS = KOVAN_TX_DEFAULTS;
 ```
-
-
-![cli](https://user-images.githubusercontent.com/27389/42068897-ea6f8aec-7b91-11e8-89b3-1505fcf2cc75.png)

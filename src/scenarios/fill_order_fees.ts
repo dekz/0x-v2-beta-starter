@@ -26,28 +26,42 @@ web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
 (async () => {
-    printScenario('Fill Order');
+    printScenario('Fill Order with Fees');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];
     const taker = accounts[1];
-    printData('Accounts', [['Maker', maker], ['Taker', taker]]);
+    const feeRecipient = accounts[2];
+    printData('Accounts', [['Maker', maker], ['Taker', taker], ['Fee Recipient', feeRecipient]]);
 
     // the amount the maker is selling in maker asset
     const makerAssetAmount = new BigNumber(100);
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(10);
+    // the amount of fees the maker pays in ZRX
+    const makerFee = new BigNumber(1);
+    // the amount of fees the taker pays in ZRX
+    const takerFee = new BigNumber(1);
+
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
     const makerAssetData = assetProxyUtils.encodeERC20AssetData(zrxTokenContract.address);
     const takerAssetData = assetProxyUtils.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
-    // Approve the new ERC20 Proxy to move ZRX for makerAccount
+    // Approve the new ERC20 Proxy to move ZRX for maker and taker
     const makerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
             from: maker,
+        },
+    );
+    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
+    const takerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
+        erc20ProxyAddress,
+        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
+        {
+            from: taker,
         },
     );
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
@@ -71,6 +85,7 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
     printData('Setup', [
         ['Maker ZRX Approval', makerZRXApproveTxHash],
+        ['Taker ZRX Approval', takerZRXApproveTxHash],
         ['Taker WETH Approval', takerWETHApproveTxHash],
         ['Taker WETH Deposit', takerWETHDepositTxHash],
     ]);
@@ -85,22 +100,22 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
         makerAddress: maker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
-        feeRecipientAddress: NULL_ADDRESS,
+        feeRecipientAddress: feeRecipient,
         expirationTimeSeconds: randomExpiration,
         salt: generatePseudoRandomSalt(),
         makerAssetAmount,
         takerAssetAmount,
         makerAssetData,
         takerAssetData,
-        makerFee: ZERO,
-        takerFee: ZERO,
+        makerFee,
+        takerFee,
     } as Order;
 
     printData('Order', Object.entries(order));
 
     // Print out the Balances and Allowances
     await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintBalancesAsync({ maker, taker, feeRecipient }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
     const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
@@ -121,7 +136,7 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintBalancesAsync({ maker, taker, feeRecipient }, [zrxTokenContract, etherTokenContract]);
 
     // Stop the Provider Engine
     providerEngine.stop();
