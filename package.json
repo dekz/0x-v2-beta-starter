@@ -14,14 +14,14 @@
         "clean": "shx rm -rf lib artifacts src/contract_wrappers",
         "copy_artifacts": "copyfiles -u 1 './src/artifacts/**/*' ./lib",
         "download_snapshot": "cross-env download --extract --strip 1 --out 0x_testrpc_snapshot ${npm_package_config_snapshot_url}",
-        "ganache-cli": "cross-env ganache-cli --noVMErrorsOnRPCResponse -p 8545 --networkId 50 --db ./0x_testrpc_snapshot -m \"${npm_package_config_mnemonic}\"",
+        "ganache-cli": "cross-env ganache-cli --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
         "testrpc": "yarn ganache-cli",
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {
         "abis": "./src/artifacts/@(ERC20Proxy|ERC721Proxy|Exchange|WETH9|ZRXToken).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
-        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/2018-06-29_0x_v2.zip"
+        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/a83f5241dc84984a5db46dd14955e1fa052aad59.zip"
     },
     "author": "",
     "license": "Apache-2.0",
