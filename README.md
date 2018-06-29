@@ -2,7 +2,7 @@ Warning this is alpha and will involve additional steps until 0x.js for v2 is pu
 
 As a number of the internal packages are not published for v2 yet, it requires a check out of 0x-monorepo locally.
 
-This project will run against the 0x V2 Kovan deployment.
+This project will run against both a local [ganache](https://truffleframework.com/ganache) and the 0x v2 Kovan deployment.
 
 Steps:
 
@@ -33,7 +33,7 @@ yarn install
 yarn link "@0xproject/types" "@0xproject/order-utils" "@0xproject/abi-gen" "@0xproject/base-contract"
 ```
 
-Update the mnemonic in `src/constants.ts` or use the one provided (note if many people use this mnemonic funds may be drained).
+Update the mnemonic in `src/constants.ts` or use the one provided (note if many people use this mnemonic on Kovan then the funds may be drained).
 
 Build this package:
 
@@ -41,8 +41,38 @@ Build this package:
 yarn run build
 ```
 
-Run this example
+Download and start the ganache instance:
+
+```
+yarn run download_snapshot
+yarn run ganache-cli
+```
+
+Run this example in another terminal:
 
 ```
 node lib/scenarios/fill_order.js
 ```
+
+To switch between Kovan/ganache uncomment the appropriate lines in `src/constants.ts` and re-build. Ganache is enabled by default.
+
+For Ganache:
+
+```
+// Ganache
+export const RPC_URL = GANACHE_RPC;
+export const NETWORK_ID = GANACHE_NETWORK_ID;
+export const TX_DEFAULTS = GANACHE_TX_DEFAULTS;
+```
+
+For Kovan:
+
+```
+// Kovan
+export const RPC_URL = KOVAN_RPC;
+export const NETWORK_ID = KOVAN_NETWORK_ID;
+export const TX_DEFAULTS = KOVAN_TX_DEFAULTS;
+```
+
+
+![cli](https://user-images.githubusercontent.com/27389/42068897-ea6f8aec-7b91-11e8-89b3-1505fcf2cc75.png)

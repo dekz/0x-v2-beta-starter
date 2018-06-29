@@ -3,7 +3,7 @@ import { assetProxyUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xPr
 import { Order, SignatureType } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { Web3Wrapper } from '@0xproject/web3-wrapper';
-import { NULL_ADDRESS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
+import { NULL_ADDRESS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO, TX_DEFAULTS } from '../constants';
 import {
     erc20ProxyAddress,
     etherTokenContract,
@@ -16,6 +16,8 @@ import { signingUtils } from '../signing_utils';
 
 const web3Wrapper = new Web3Wrapper(providerEngine);
 (async () => {
+    console.log('Fill Order');
+    console.log('\nAccounts');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const makerAccount = accounts[0];
     const takerAccount = accounts[1];
@@ -28,9 +30,13 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
     const makerAssetData = assetProxyUtils.encodeERC20AssetData(zrxTokenContract.address);
     const takerAssetData = assetProxyUtils.encodeERC20AssetData(etherTokenContract.address);
+    console.log('\nAsset Data');
+    console.log('makerAssetData', makerAssetData);
+    console.log('takerAssetData', takerAssetData);
     let txHash;
     let txReceipt;
 
+    console.log('\nSetup');
     // Approve the new ERC20 Proxy to move ZRX for makerAccount
     txHash = await zrxTokenContract.approve.sendTransactionAsync(erc20ProxyAddress, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, {
         from: makerAccount,
@@ -55,14 +61,20 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
 
     // Print out the Balances and Allowances
-    const makerZRXBalance = await zrxTokenContract.balanceOf.callAsync(makerAccount);
+    let makerZRXBalance = await zrxTokenContract.balanceOf.callAsync(makerAccount);
+    let makerWETHBalance = await etherTokenContract.balanceOf.callAsync(makerAccount);
     const makerZRXERC20ProxyAllowance = await zrxTokenContract.allowance.callAsync(makerAccount, erc20ProxyAddress);
-    const takerWETHBalance = await etherTokenContract.balanceOf.callAsync(takerAccount);
+    let takerWETHBalance = await etherTokenContract.balanceOf.callAsync(takerAccount);
+    let takerZRXBalance = await zrxTokenContract.balanceOf.callAsync(takerAccount);
     const takerWETHERC20ProxyAllowance = await etherTokenContract.allowance.callAsync(takerAccount, erc20ProxyAddress);
-    console.log('makerZRXBalance', makerZRXBalance.toString());
+    console.log('\nAllowances');
     console.log('makerZRXERC20ProxyAllowance', makerZRXERC20ProxyAllowance.toString());
-    console.log('takerWETHBalance', takerWETHBalance.toString());
     console.log('takerWETHERC20ProxyAllowance', takerWETHERC20ProxyAllowance.toString());
+    console.log('\nBalances Before');
+    console.log('makerZRXBalance', makerZRXBalance.toString());
+    console.log('makerWETHBalance', makerWETHBalance.toString());
+    console.log('takerWETHBalance', takerWETHBalance.toString());
+    console.log('takerZRXBalance', takerZRXBalance.toString());
 
     // Set up the Order and fill it
     const tenMinutes = 10 * 60 * 1000;
@@ -98,13 +110,28 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 
     // Check that the signature is valid via the Exchange contract
     const isValidSignature = await exchangeContract.isValidSignature.callAsync(orderHashHex, makerAccount, signature);
-    console.log('isValidSignature', isValidSignature);
+    console.log('\nisValidSignature', isValidSignature);
 
-    // Fill the Order from takerAccount
+    console.log('\nexchange.fillOrder');
     txHash = await exchangeContract.fillOrder.sendTransactionAsync(order, takerAssetAmount, signature, {
+        ...TX_DEFAULTS,
         from: takerAccount,
     });
-    console.log('fillOrder txHash:', txHash);
+    console.log('txHash:', txHash);
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+    console.log('gasUsed:', txReceipt.gasUsed);
+
+    // Print the Balances
+    makerZRXBalance = await zrxTokenContract.balanceOf.callAsync(makerAccount);
+    makerWETHBalance = await etherTokenContract.balanceOf.callAsync(makerAccount);
+    takerWETHBalance = await etherTokenContract.balanceOf.callAsync(takerAccount);
+    takerZRXBalance = await zrxTokenContract.balanceOf.callAsync(takerAccount);
+    console.log('\nBalances After');
+    console.log('makerZRXBalance', makerZRXBalance.toString());
+    console.log('makerWETHBalance', makerWETHBalance.toString());
+    console.log('takerWETHBalance', takerWETHBalance.toString());
+    console.log('takerZRXBalance', takerZRXBalance.toString());
+
+    // Stop the Provider Engine
     providerEngine.stop();
 })();
