@@ -26,13 +26,14 @@ cd types && yarn link && cd ../
 cd order-utils && yarn link && cd ../
 cd abi-gen && yarn link && cd ../
 cd base-contract && yarn link && cd ../
+cd web3-wrapper && yarn link && cd ../
 ```
 
 In this project, install dependencies then link the projects the 0x-monorepo packages from the previous step:
 
 ```
 yarn install
-yarn link "@0xproject/types" "@0xproject/order-utils" "@0xproject/abi-gen" "@0xproject/base-contract"
+yarn link "@0xproject/types" "@0xproject/order-utils" "@0xproject/abi-gen" "@0xproject/base-contract" "@0xproject/web3-wrapper"
 ```
 
 Update the mnemonic in `src/constants.ts` or use the one provided (note if many people use this mnemonic on Kovan then the funds may be drained).

@@ -25,7 +25,7 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
-(async () => {
+async function scenario() {
     printScenario('Fill Order with Fees');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];
@@ -53,6 +53,7 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
+            ...TX_DEFAULTS,
             from: maker,
         },
     );
@@ -61,16 +62,18 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
+            ...TX_DEFAULTS,
             from: taker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
+    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerZRXApproveTxHash);
 
     // Approve the new ERC20 Proxy to move WETH for takerAccount
     const takerWETHApproveTxHash = await etherTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
+            ...TX_DEFAULTS,
             from: taker,
         },
     );
@@ -78,6 +81,7 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
     // Deposit ETH into WETH for the taker
     const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
+        ...TX_DEFAULTS,
         from: taker,
         value: takerAssetAmount,
     });
@@ -127,17 +131,28 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
         SignatureType.EthSign,
     );
     const signature = `0x${signatureBuffer.toString('hex')}`;
-
     txHash = await exchangeContract.fillOrder.sendTransactionAsync(order, takerAssetAmount, signature, {
         ...TX_DEFAULTS,
         from: taker,
     });
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
-    printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
+    printTransaction('fillOrder', txReceipt, [
+        ['orderHash', orderHashHex],
+        ['takerAssetAmount', takerAssetAmount.toString()],
+    ]);
 
     // Print the Balances
     await fetchAndPrintBalancesAsync({ maker, taker, feeRecipient }, [zrxTokenContract, etherTokenContract]);
 
     // Stop the Provider Engine
     providerEngine.stop();
+}
+
+(async () => {
+    try {
+        await scenario();
+    } catch (e) {
+        console.log(e);
+        providerEngine.stop();
+    }
 })();

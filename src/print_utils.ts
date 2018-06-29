@@ -132,18 +132,15 @@ export function printTransaction(
     events: string[] = ['Fill', 'Transfer'],
 ): void {
     printHeader('Transaction');
+    const status = txReceipt.status == 1 ? 'Success' : 'Failure';
+    const headerColor = txReceipt.status == 1 ? 'green' : 'red';
     const table = new Table({
         ...defaultSchema,
-        head: [header, ''],
+        head: [header, txReceipt.transactionHash],
+        style: { ...defaultSchema.style, head: [headerColor] },
     });
 
-    const status = txReceipt.status == 1 ? 'Success' : 'Failure';
-    const tableData = [
-        ...data,
-        ['txHash', txReceipt.transactionHash],
-        ['gasUsed', txReceipt.gasUsed.toString()],
-        ['status', status],
-    ];
+    const tableData = [...data, ['gasUsed', txReceipt.gasUsed.toString()], ['status', status]];
     pushAndPrint(table, tableData);
 
     if (txReceipt.logs.length > 0) {
