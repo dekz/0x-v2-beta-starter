@@ -38,19 +38,24 @@ export async function scenario(): Promise<void> {
     const maker = accounts[0];
     const taker = accounts[1];
     const sender = accounts[2];
+    const feeRecipientAddress = sender;
     printData('Accounts', [['Maker', maker], ['Taker', taker], ['Sender', sender]]);
 
     // the amount the maker is selling in maker asset
     const makerAssetAmount = new BigNumber(100);
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(10);
+    // the amount the maker pays in fees
+    const makerFee = new BigNumber(2);
+    // the amount the taker pays in fees
+    const takerFee = new BigNumber(3);
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
     const makerAssetData = assetProxyUtils.encodeERC20AssetData(zrxTokenContract.address);
     const takerAssetData = assetProxyUtils.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
-    // Approve the new ERC20 Proxy to move ZRX for makerAccount
+    // Approve the new ERC20 Proxy to move ZRX for maker
     const makerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
@@ -60,7 +65,17 @@ export async function scenario(): Promise<void> {
     );
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
 
-    // Approve the new ERC20 Proxy to move WETH for takerAccount
+    // Approve the new ERC20 Proxy to move ZRX for taker
+    const takerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
+        erc20ProxyAddress,
+        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
+        {
+            from: taker,
+        },
+    );
+    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerZRXApproveTxHash);
+
+    // Approve the new ERC20 Proxy to move WETH for taker
     const takerWETHApproveTxHash = await etherTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
@@ -79,6 +94,7 @@ export async function scenario(): Promise<void> {
 
     printData('Setup', [
         ['Maker ZRX Approval', makerZRXApproveTxHash],
+        ['Taker ZRX Approval', takerZRXApproveTxHash],
         ['Taker WETH Approval', takerWETHApproveTxHash],
         ['Taker WETH Deposit', takerWETHDepositTxHash],
     ]);
@@ -92,15 +108,15 @@ export async function scenario(): Promise<void> {
         makerAddress: maker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
-        feeRecipientAddress: NULL_ADDRESS,
+        feeRecipientAddress,
         expirationTimeSeconds: randomExpiration,
         salt: generatePseudoRandomSalt(),
         makerAssetAmount,
         takerAssetAmount,
         makerAssetData,
         takerAssetData,
-        makerFee: ZERO,
-        takerFee: ZERO,
+        makerFee,
+        takerFee,
     };
 
     const order = {
@@ -112,7 +128,7 @@ export async function scenario(): Promise<void> {
 
     // Print out the Balances and Allowances
     await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintBalancesAsync({ maker, taker, sender }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
     const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
@@ -159,7 +175,7 @@ export async function scenario(): Promise<void> {
     printTransaction('Execute Transaction fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintBalancesAsync({ maker, taker, sender }, [zrxTokenContract, etherTokenContract]);
 
     // Stop the Provider Engine
     providerEngine.stop();
