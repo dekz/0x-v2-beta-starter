@@ -28,10 +28,11 @@ web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 export async function scenario(): Promise<void> {
     // In this scenario a third party, called the sender, submits the operation on behalf of the taker.
     // This allows a sender to pay the gas on behalf of the taker. It can be combined with a custom sender
-    // contract with additional business logic. Or the sender can choose at when the transaction should be
-    // submitted, or not at all.
-    // The maker will create order and sign an order. This order and extra parameters for the execute transaction
-    // function call are signed by the taker. The signed execute transaction data is then submitted by the sender.
+    // contract with additional business logic. Or the sender can choose when the transaction should be
+    // submitted, if at all.
+    // The maker will create and sign the order. The signed order and extra parameters for the execute transaction
+    // function call are signed by the taker. The signed execute transaction data is then submitted by the sender
+    // to the 0x Exchange contract.
     printScenario('Execute Transaction fillOrder');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];
