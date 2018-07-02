@@ -27,7 +27,7 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(etherTokenContract.abi);
 
-async function scenario() {
+export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling an ERC721 token for WETH.
     // The taker takes this order and fills it via the 0x Exchange contract.
     printScenario('Fill Order ERC721');
@@ -117,7 +117,7 @@ async function scenario() {
     // Print out the Balances and Allowances
     await fetchAndPrintAllowancesAsync({ maker, taker }, [etherTokenContract], erc20ProxyAddress);
     await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
-    await fetchAndPrintERC721Owner({ maker, taker }, [dummyERC721TokenContract], tokenId);
+    await fetchAndPrintERC721Owner({ maker, taker }, dummyERC721TokenContract, tokenId);
 
     // Create the order hash
     const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
@@ -139,7 +139,7 @@ async function scenario() {
 
     // Print the Balances
     await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
-    await fetchAndPrintERC721Owner({ maker, taker }, [dummyERC721TokenContract], tokenId);
+    await fetchAndPrintERC721Owner({ maker, taker }, dummyERC721TokenContract, tokenId);
 
     // Stop the Provider Engine
     providerEngine.stop();
@@ -147,7 +147,7 @@ async function scenario() {
 
 (async () => {
     try {
-        await scenario();
+        if (!module.parent) await scenario();
     } catch (e) {
         console.log(e);
         providerEngine.stop();

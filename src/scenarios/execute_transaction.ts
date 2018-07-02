@@ -25,7 +25,7 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
-async function scenario() {
+export async function scenario(): Promise<void> {
     // In this scenario a third party, called the sender, submits the operation on behalf of the taker.
     // This allows a sender to pay the gas on behalf of the taker. It can be combined with a custom sender
     // contract with additional business logic. Or the sender can choose at when the transaction should be
@@ -166,7 +166,7 @@ async function scenario() {
 
 (async () => {
     try {
-        await scenario();
+        if (!module.parent) await scenario();
     } catch (e) {
         console.log(e);
         providerEngine.stop();

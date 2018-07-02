@@ -25,7 +25,7 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
-async function scenario() {
+export async function scenario(): Promise<void> {
     // In this scenario, the maker creates and signs an order (leftOrder) for selling ZRX for WETH.
     // The taker has a matched (or mirrored) order (rightOrder) of WETH for ZRX.
     // The matcher submits these orders and to the 0x Exchange contract.
@@ -178,7 +178,7 @@ async function scenario() {
 
 (async () => {
     try {
-        await scenario();
+        if (!module.parent) await scenario();
     } catch (e) {
         console.log(e);
         providerEngine.stop();

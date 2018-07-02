@@ -25,7 +25,7 @@ const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
-async function scenario() {
+export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling ZRX for WETH.
     // The taker takes this order and fills it via the 0x Exchange contract.
     printScenario('Fill Order');
@@ -131,7 +131,7 @@ async function scenario() {
 
 (async () => {
     try {
-        await scenario();
+        if (!module.parent) await scenario();
     } catch (e) {
         console.log(e);
         providerEngine.stop();
