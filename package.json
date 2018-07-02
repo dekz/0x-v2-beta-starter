@@ -19,7 +19,7 @@
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {
-        "abis": "./src/artifacts/@(ERC20Proxy|ERC721Proxy|Exchange|WETH9|ZRXToken).json",
+        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|ERC20Proxy|ERC721Proxy|Exchange|WETH9|ZRXToken).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
         "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/a83f5241dc84984a5db46dd14955e1fa052aad59.zip"
     },

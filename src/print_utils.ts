@@ -1,8 +1,21 @@
 import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from './constants';
 import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
+import { BigNumber } from '@0xproject/utils';
 
 const Table = require('cli-table');
 const EMPTY_DATA = [];
+
+const erc721IconRaw = [
+    '    ____  ',
+    '  .X +.    .',
+    '.Xx + -.     .',
+    'XXx++ -..      ',
+    'XXxx++--..    ',
+    ` XXXxx+++--  `,
+    "  XXXxxx'     ",
+    '     ""     ',
+];
+const erc721Icon = erc721IconRaw.join('\n');
 
 const defaultSchema = {
     style: {
@@ -95,6 +108,32 @@ export async function fetchAndPrintBalancesAsync(accountDetails: {}, contracts: 
         head: ['Token', ...flattenedAccounts],
     });
     printHeader('Balances');
+    pushAndPrint(table, flattenedBalances);
+}
+
+export async function fetchAndPrintERC721Owner(
+    accountDetails: {},
+    erc721Contract: any,
+    tokenId: BigNumber,
+): Promise<void> {
+    const flattenedBalances = [];
+    const flattenedAccounts = Object.keys(accountDetails).map(
+        account => account.charAt(0).toUpperCase() + account.slice(1),
+    );
+    const tokenSymbol = await erc721Contract.symbol.callAsync();
+    const balances = [tokenSymbol];
+    const owner = await erc721Contract.ownerOf.callAsync(tokenId);
+    for (const account in accountDetails) {
+        const address = accountDetails[account];
+        const balance = owner === address ? erc721Icon : '';
+        balances.push(balance.toString());
+    }
+    flattenedBalances.push(balances);
+    const table = new Table({
+        ...dataSchema,
+        head: ['Token', ...flattenedAccounts],
+    });
+    printHeader('ERC721 Owner');
     pushAndPrint(table, flattenedBalances);
 }
 
