@@ -26,12 +26,17 @@ web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
 async function scenario() {
+    // In this scenario, the maker creates and signs an order (leftOrder) for selling ZRX for WETH.
+    // The taker has a matched (or mirrored) order (rightOrder) of WETH for ZRX.
+    // The matcher submits these orders and to the 0x Exchange contract.
+    // In this scenario, the matcher pays taker fees on both orders, the leftMaker pays the leftOrder maker fee
+    // and the rightMaker pays the rightOrder maker fee.
     printScenario('Match Orders');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
-    const maker = accounts[0];
-    const taker = accounts[1];
+    const leftMaker = accounts[0];
+    const rightMaker = accounts[1];
     const matcherAccount = accounts[2];
-    printData('Accounts', [['Maker', maker], ['Taker', taker], ['Order Matcher', matcherAccount]]);
+    printData('Accounts', [['Left Maker', leftMaker], ['Right Maker', rightMaker], ['Order Matcher', matcherAccount]]);
 
     // the amount the maker is selling in maker asset
     const makerAssetAmount = new BigNumber(10);
@@ -48,7 +53,7 @@ async function scenario() {
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
-            from: maker,
+            from: leftMaker,
         },
     );
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
@@ -58,14 +63,14 @@ async function scenario() {
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
-            from: taker,
+            from: rightMaker,
         },
     );
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHApproveTxHash);
 
     // Deposit ETH into WETH for the taker
     const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
-        from: taker,
+        from: rightMaker,
         value: takerAssetAmount,
     });
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHDepositTxHash);
@@ -83,7 +88,7 @@ async function scenario() {
     // Create the order
     const leftOrder = {
         exchangeAddress: exchangeContract.address,
-        makerAddress: maker,
+        makerAddress: leftMaker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
         feeRecipientAddress: NULL_ADDRESS,
@@ -102,7 +107,7 @@ async function scenario() {
     const rightOrderTakerAssetAmount = new BigNumber(2);
     const rightOrder = {
         exchangeAddress: exchangeContract.address,
-        makerAddress: taker,
+        makerAddress: rightMaker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
         feeRecipientAddress: NULL_ADDRESS,
@@ -122,7 +127,7 @@ async function scenario() {
     const leftOrderHashHex = `0x${leftOrderHashBuffer.toString('hex')}`;
     const leftSignatureBuffer = await signingUtils.signMessageAsync(
         leftOrderHashBuffer,
-        maker,
+        leftMaker,
         mnemonicWallet,
         SignatureType.EthSign,
     );
@@ -133,15 +138,19 @@ async function scenario() {
     const rightOrderHashHex = `0x${rightOrderHashBuffer.toString('hex')}`;
     const rightSignatureBuffer = await signingUtils.signMessageAsync(
         rightOrderHashBuffer,
-        taker,
+        rightMaker,
         mnemonicWallet,
         SignatureType.EthSign,
     );
     const rightSignature = `0x${rightSignatureBuffer.toString('hex')}`;
 
     // Print out the Balances and Allowances
-    await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintAllowancesAsync(
+        { leftMaker, rightMaker },
+        [zrxTokenContract, etherTokenContract],
+        erc20ProxyAddress,
+    );
+    await fetchAndPrintBalancesAsync({ leftMaker, rightMaker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
 
     txHash = await exchangeContract.matchOrders.sendTransactionAsync(
         leftOrder,
@@ -161,7 +170,7 @@ async function scenario() {
     ]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintBalancesAsync({ leftMaker, rightMaker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
 
     // Stop the Provider Engine
     providerEngine.stop();

@@ -126,7 +126,7 @@ export async function fetchAndPrintERC721Owner(
     for (const account in accountDetails) {
         const address = accountDetails[account];
         const balance = owner === address ? erc721Icon : '';
-        balances.push(balance.toString());
+        balances.push(balance);
     }
     flattenedBalances.push(balances);
     const table = new Table({

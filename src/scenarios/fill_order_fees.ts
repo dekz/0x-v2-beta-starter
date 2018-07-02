@@ -26,6 +26,9 @@ web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
 web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
 async function scenario() {
+    // In this scenario, the maker creates and signs an order for selling ZRX for WETH.
+    // This order has ZRX fees for both the maker and taker, paid out to the fee recipient.
+    // The taker takes this order and fills it via the 0x Exchange contract.
     printScenario('Fill Order with Fees');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];

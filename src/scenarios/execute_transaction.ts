@@ -6,17 +6,15 @@ import { Web3Wrapper } from '@0xproject/web3-wrapper';
 import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
 import {
     erc20ProxyAddress,
-    erc721ProxyAddress,
     etherTokenContract,
     exchangeContract,
-    dummyERC721TokenContracts,
     mnemonicWallet,
     providerEngine,
+    zrxTokenContract,
 } from '../contracts';
 import {
     fetchAndPrintAllowancesAsync,
     fetchAndPrintBalancesAsync,
-    fetchAndPrintERC721Owner,
     printData,
     printScenario,
     printTransaction,
@@ -25,47 +23,41 @@ import { signingUtils } from '../signing_utils';
 
 const web3Wrapper = new Web3Wrapper(providerEngine);
 web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
-web3Wrapper.abiDecoder.addABI(etherTokenContract.abi);
+web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
 async function scenario() {
-    // In this scenario, the maker creates and signs an order for selling an ERC721 token for WETH.
-    // The taker takes this order and fills it via the 0x Exchange contract.
-    printScenario('Fill Order ERC721');
-    const dummyERC721TokenContract = dummyERC721TokenContracts[0];
-    if (!dummyERC721TokenContract) {
-        console.log('No Dummy ERC721 Tokens deployed on this network');
-        return;
-    }
-    web3Wrapper.abiDecoder.addABI(dummyERC721TokenContract.abi);
+    // In this scenario a third party, called the sender, submits the operation on behalf of the taker.
+    // This allows a sender to pay the gas on behalf of the taker. It can be combined with a custom sender
+    // contract with additional business logic. Or the sender can choose at when the transaction should be
+    // submitted, or not at all.
+    // The maker will create order and sign an order. This order and extra parameters for the execute transaction
+    // function call are signed by the taker. The signed execute transaction data is then submitted by the sender.
+    printScenario('Execute Transaction fillOrder');
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];
     const taker = accounts[1];
-    printData('Accounts', [['Maker', maker], ['Taker', taker]]);
+    const sender = accounts[2];
+    printData('Accounts', [['Maker', maker], ['Taker', taker], ['Sender', sender]]);
 
-    // the amount the maker is selling in maker asset (1 ERC721 Token)
-    const makerAssetAmount = new BigNumber(1);
+    // the amount the maker is selling in maker asset
+    const makerAssetAmount = new BigNumber(100);
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(10);
-    const tokenId = generatePseudoRandomSalt();
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetProxyUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
+    const makerAssetData = assetProxyUtils.encodeERC20AssetData(zrxTokenContract.address);
     const takerAssetData = assetProxyUtils.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
-    // Mint a new ERC721 token for the maker
-    const mintTxHash = await dummyERC721TokenContract.mint.sendTransactionAsync(maker, tokenId, { from: maker });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(mintTxHash);
-
-    // Approve the new ERC721 Proxy to move the ERC721 tokens for makerAccount
-    const makerERC721ApproveTxHash = await dummyERC721TokenContract.setApprovalForAll.sendTransactionAsync(
-        erc721ProxyAddress,
-        true,
+    // Approve the new ERC20 Proxy to move ZRX for makerAccount
+    const makerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
+        erc20ProxyAddress,
+        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
             from: maker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerERC721ApproveTxHash);
+    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
 
     // Approve the new ERC20 Proxy to move WETH for takerAccount
     const takerWETHApproveTxHash = await etherTokenContract.approve.sendTransactionAsync(
@@ -85,8 +77,7 @@ async function scenario() {
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHDepositTxHash);
 
     printData('Setup', [
-        ['Mint ERC721', mintTxHash],
-        ['Maker ERC721 Approval', makerERC721ApproveTxHash],
+        ['Maker ZRX Approval', makerZRXApproveTxHash],
         ['Taker WETH Approval', takerWETHApproveTxHash],
         ['Taker WETH Deposit', takerWETHDepositTxHash],
     ]);
@@ -96,8 +87,7 @@ async function scenario() {
     const randomExpiration = new BigNumber(Date.now() + tenMinutes);
 
     // Create the order
-    const order = {
-        exchangeAddress: exchangeContract.address,
+    const orderWithoutExchangeAddress = {
         makerAddress: maker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
@@ -110,36 +100,65 @@ async function scenario() {
         takerAssetData,
         makerFee: ZERO,
         takerFee: ZERO,
+    };
+
+    const order = {
+        ...orderWithoutExchangeAddress,
+        exchangeAddress: exchangeContract.address,
     } as Order;
 
     printData('Order', Object.entries(order));
 
     // Print out the Balances and Allowances
-    await fetchAndPrintAllowancesAsync({ maker, taker }, [etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
-    await fetchAndPrintERC721Owner({ maker, taker }, [dummyERC721TokenContract], tokenId);
+    await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
+    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
     const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
-    const orderHashHex = `0x${orderHashBuffer.toString('hex')}`;
     const signatureBuffer = await signingUtils.signMessageAsync(
         orderHashBuffer,
         maker,
         mnemonicWallet,
         SignatureType.EthSign,
     );
+    const orderHashHex = `0x${orderHashBuffer.toString('hex')}`;
     const signature = `0x${signatureBuffer.toString('hex')}`;
 
-    txHash = await exchangeContract.fillOrder.sendTransactionAsync(order, takerAssetAmount, signature, {
-        ...TX_DEFAULTS,
-        from: taker,
-    });
+    // This is an ABI encoded function call that the taker wishes to perform
+    // in this scenario it is a fillOrder
+    const fillData = exchangeContract.fillOrder.getABIEncodedTransactionData(
+        orderWithoutExchangeAddress,
+        takerAssetAmount,
+        signature,
+    );
+    // Generate a random salt to mitigate replay attacks
+    const takerTransactionSalt = generatePseudoRandomSalt();
+    // The taker signs the operation data (fillOrder) with the salt
+    const takerSignatureBuffer = await signingUtils.newSignedTransactionAsync(
+        fillData,
+        takerTransactionSalt,
+        taker,
+        exchangeContract.address,
+        mnemonicWallet,
+    );
+    const takerSignature = `0x${takerSignatureBuffer.toString('hex')}`;
+    // The sender submits this operation via executeTransaction passing in the signature from the taker
+    txHash = await exchangeContract.executeTransaction.sendTransactionAsync(
+        takerTransactionSalt,
+        taker,
+        fillData,
+        takerSignature,
+        {
+            ...TX_DEFAULTS,
+            from: sender,
+        },
+    );
     txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
-    printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
+
+    printTransaction('Execute Transaction fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
-    await fetchAndPrintERC721Owner({ maker, taker }, [dummyERC721TokenContract], tokenId);
+    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
 
     // Stop the Provider Engine
     providerEngine.stop();
