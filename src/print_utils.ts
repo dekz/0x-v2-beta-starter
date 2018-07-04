@@ -1,6 +1,8 @@
 import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from './constants';
 import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
 import { BigNumber } from '@0xproject/utils';
+import ora = require('ora');
+import { web3Wrapper } from './contracts';
 
 const Table = require('cli-table');
 const EMPTY_DATA = [];
@@ -162,6 +164,24 @@ export async function fetchAndPrintAllowancesAsync(
     });
     printHeader('Allowances');
     pushAndPrint(table, flattenedAllowances);
+}
+
+export async function awaitTransactionMinedSpinnerAsync(
+    message: string,
+    txHash: string,
+): Promise<TransactionReceiptWithDecodedLogs> {
+    const spinner = ora(`${message}: ${txHash}`).start();
+    if (!spinner['isSpinning']) {
+        console.log(message, txHash);
+    }
+    try {
+        const receipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+        receipt.status === 1 ? spinner.stop() : spinner.fail(message);
+        return receipt;
+    } catch (e) {
+        spinner.fail(message);
+        throw e;
+    }
 }
 
 export function printTransaction(

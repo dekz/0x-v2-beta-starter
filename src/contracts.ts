@@ -8,6 +8,7 @@ import { ZRXTokenContract } from './contract_wrappers/zrx_token';
 import { ERC20ProxyContract } from './contract_wrappers/e_r_c20_proxy';
 import { DummyERC20TokenContract } from './contract_wrappers/dummy_e_r_c20_token';
 import { DummyERC721TokenContract } from './contract_wrappers/dummy_e_r_c721_token';
+import { Web3Wrapper } from '@0xproject/web3-wrapper';
 
 const Web3ProviderEngine = require('web3-provider-engine');
 const RpcSubprovider = require('web3-provider-engine/subproviders/rpc');
@@ -82,3 +83,7 @@ if (NETWORK_ID === GANACHE_NETWORK_ID) {
         );
     }
 }
+
+export const web3Wrapper = new Web3Wrapper(providerEngine);
+web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
+web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);

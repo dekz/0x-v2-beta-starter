@@ -2,7 +2,6 @@
 import { assetProxyUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xProject/order-utils';
 import { Order, SignatureType } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { Web3Wrapper } from '@0xproject/web3-wrapper';
 import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
 import {
     erc20ProxyAddress,
@@ -11,6 +10,7 @@ import {
     mnemonicWallet,
     providerEngine,
     zrxTokenContract,
+    web3Wrapper,
 } from '../contracts';
 import {
     fetchAndPrintAllowancesAsync,
@@ -18,12 +18,9 @@ import {
     printData,
     printScenario,
     printTransaction,
+    awaitTransactionMinedSpinnerAsync,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
-
-const web3Wrapper = new Web3Wrapper(providerEngine);
-web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
-web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);
 
 export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling ZRX for WETH.
@@ -45,35 +42,35 @@ export async function scenario() {
     let txReceipt;
 
     // Approve the new ERC20 Proxy to move ZRX for makerAccount
-    const makerZRXApproveTxHash = await zrxTokenContract.approve.sendTransactionAsync(
+    const makerZRXApprovalTxHash = await zrxTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
             from: maker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerZRXApproveTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash);
 
     // Approve the new ERC20 Proxy to move WETH for takerAccount
-    const takerWETHApproveTxHash = await etherTokenContract.approve.sendTransactionAsync(
+    const takerWETHApprovalTxHash = await etherTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
         {
             from: taker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHApproveTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash);
 
     // Deposit ETH into WETH for the taker
     const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
         from: taker,
         value: takerAssetAmount,
     });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHDepositTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
 
     printData('Setup', [
-        ['Maker ZRX Approval', makerZRXApproveTxHash],
-        ['Taker WETH Approval', takerWETHApproveTxHash],
+        ['Maker ZRX Approval', makerZRXApprovalTxHash],
+        ['Taker WETH Approval', takerWETHApprovalTxHash],
         ['Taker WETH Deposit', takerWETHDepositTxHash],
     ]);
 
@@ -119,7 +116,7 @@ export async function scenario() {
         ...TX_DEFAULTS,
         from: taker,
     });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('fillOrder', txHash);
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances

@@ -2,7 +2,6 @@
 import { assetProxyUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xProject/order-utils';
 import { Order, SignatureType } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { Web3Wrapper } from '@0xproject/web3-wrapper';
 import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
 import {
     erc20ProxyAddress,
@@ -12,6 +11,7 @@ import {
     dummyERC721TokenContracts,
     mnemonicWallet,
     providerEngine,
+    web3Wrapper,
 } from '../contracts';
 import {
     fetchAndPrintAllowancesAsync,
@@ -20,12 +20,9 @@ import {
     printData,
     printScenario,
     printTransaction,
+    awaitTransactionMinedSpinnerAsync,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
-
-const web3Wrapper = new Web3Wrapper(providerEngine);
-web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
-web3Wrapper.abiDecoder.addABI(etherTokenContract.abi);
 
 export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling an ERC721 token for WETH.
@@ -55,9 +52,9 @@ export async function scenario() {
 
     // Mint a new ERC721 token for the maker
     const mintTxHash = await dummyERC721TokenContract.mint.sendTransactionAsync(maker, tokenId, { from: maker });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(mintTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Mint ERC721 Token', mintTxHash);
 
-    // Approve the new ERC721 Proxy to move the ERC721 tokens for makerAccount
+    // Approve the new ERC721 Proxy to move the ERC721 tokens for maker
     const makerERC721ApproveTxHash = await dummyERC721TokenContract.setApprovalForAll.sendTransactionAsync(
         erc721ProxyAddress,
         true,
@@ -65,9 +62,9 @@ export async function scenario() {
             from: maker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(makerERC721ApproveTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ERC721 Approval', makerERC721ApproveTxHash);
 
-    // Approve the new ERC20 Proxy to move WETH for takerAccount
+    // Approve the new ERC20 Proxy to move WETH for taker
     const takerWETHApproveTxHash = await etherTokenContract.approve.sendTransactionAsync(
         erc20ProxyAddress,
         UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
@@ -75,14 +72,14 @@ export async function scenario() {
             from: taker,
         },
     );
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHApproveTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApproveTxHash);
 
     // Deposit ETH into WETH for the taker
     const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
         from: taker,
         value: takerAssetAmount,
     });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(takerWETHDepositTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
 
     printData('Setup', [
         ['Mint ERC721', mintTxHash],
@@ -134,7 +131,7 @@ export async function scenario() {
         ...TX_DEFAULTS,
         from: taker,
     });
-    txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('fillOrder', txHash);
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
