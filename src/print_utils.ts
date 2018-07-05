@@ -3,6 +3,7 @@ import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
 import { BigNumber } from '@0xproject/utils';
 import ora = require('ora');
 import { web3Wrapper } from './contracts';
+import { Order } from '@0xproject/types';
 
 const Table = require('cli-table');
 const EMPTY_DATA = [];
@@ -188,7 +189,7 @@ export function printTransaction(
     header: string,
     txReceipt: TransactionReceiptWithDecodedLogs,
     data: string[][] = [],
-    events: string[] = ['Fill', 'Transfer'],
+    events: string[] = ['Fill', 'Transfer', 'CancelUpTo', 'Cancel'],
 ): void {
     printHeader('Transaction');
     const status = txReceipt.status == 1 ? 'Success' : 'Failure';
@@ -213,4 +214,26 @@ export function printTransaction(
             }
         }
     }
+}
+
+enum OrderStatus {
+    INVALID = 0, // Default value
+    INVALID_MAKER_ASSET_AMOUNT = 1, // Order does not have a valid maker asset amount
+    INVALID_TAKER_ASSET_AMOUNT = 2, // Order does not have a valid taker asset amount
+    FILLABLE = 3, // Order is fillable
+    EXPIRED = 4, // Order has already expired
+    FULLY_FILLED = 5, // Order is fully filled
+    CANCELLED = 6, // Order has been cancelled
+}
+
+export function printOrderInfos(orderInfos: {
+    [key: string]: { orderStatus: number; orderHash: string; orderTakerAssetFilledAmount: BigNumber };
+}) {
+    const data = [];
+    for (const order in orderInfos) {
+        const orderInfo = orderInfos[order];
+        const orderStatus = OrderStatus[orderInfo.orderStatus];
+        data.push([order, orderStatus]);
+    }
+    printData('Order Info', data);
 }

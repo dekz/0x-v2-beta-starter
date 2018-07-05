@@ -22,6 +22,7 @@
         "scenario:fill_order_erc721": "cross-env yarn run build && node ./lib/scenarios/fill_order_erc721.js",
         "scenario:match_orders": "cross-env yarn run build && node ./lib/scenarios/match_orders.js",
         "scenario:execute_transaction": "cross-env yarn run build && node ./lib/scenarios/execute_transaction.js",
+        "scenario:cancel_orders_up_to": "cross-env yarn run build && node ./lib/scenarios/cancel_orders_up_to.js",
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {

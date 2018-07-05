@@ -11,6 +11,7 @@ This project will run against both a local [ganache](https://truffleframework.co
 -   Fill Order (ERC20)
 -   Fill Order Fees
 -   Fill Order (ERC721)
+-   Cancel Orders Up To
 -   Match Orders
 -   Execute Transaction
 
