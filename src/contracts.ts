@@ -5,9 +5,9 @@ import { BASE_DERIVATION_PATH, NETWORK_ID, RPC_URL, MNEMONIC, GANACHE_NETWORK_ID
 import { ExchangeContract } from './contract_wrappers/exchange';
 import { WETH9Contract } from './contract_wrappers/weth9';
 import { ZRXTokenContract } from './contract_wrappers/zrx_token';
-import { ERC20ProxyContract } from './contract_wrappers/e_r_c20_proxy';
-import { DummyERC20TokenContract } from './contract_wrappers/dummy_e_r_c20_token';
-import { DummyERC721TokenContract } from './contract_wrappers/dummy_e_r_c721_token';
+import { ERC20ProxyContract } from './contract_wrappers/erc20_proxy';
+import { DummyERC20TokenContract } from './contract_wrappers/dummy_erc20_token';
+import { DummyERC721TokenContract } from './contract_wrappers/dummy_erc721_token';
 import { Web3Wrapper } from '@0xproject/web3-wrapper';
 
 const Web3ProviderEngine = require('web3-provider-engine');
