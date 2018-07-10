@@ -3,6 +3,7 @@ import { MnemonicWalletSubprovider } from '@0xproject/subproviders';
 import { artifacts } from './artifacts';
 import { BASE_DERIVATION_PATH, NETWORK_ID, RPC_URL, MNEMONIC, GANACHE_NETWORK_ID } from './constants';
 import { ExchangeContract } from './contract_wrappers/exchange';
+import { ForwarderContract } from './contract_wrappers/forwarder';
 import { WETH9Contract } from './contract_wrappers/weth9';
 import { ZRXTokenContract } from './contract_wrappers/zrx_token';
 import { ERC20ProxyContract } from './contract_wrappers/erc20_proxy';
@@ -57,6 +58,12 @@ export const erc20ProxyContract = new ERC20ProxyContract(
 export const erc721ProxyContract = new ERC20ProxyContract(
     artifacts.ERC721Proxy.compilerOutput.abi,
     artifacts.ERC721Proxy.networks[NETWORK_ID].address,
+    providerEngine,
+);
+
+export const forwarderContract = new ForwarderContract(
+    artifacts.Forwarder.compilerOutput.abi,
+    artifacts.Forwarder.networks[NETWORK_ID].address,
     providerEngine,
 );
 

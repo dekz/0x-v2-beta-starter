@@ -14,11 +14,11 @@ import {
     providerEngine,
     mnemonicWallet,
     erc721ProxyContract,
+    web3Wrapper,
 } from '../contracts';
 import { signingUtils } from '../signing_utils';
 import { printData, fetchAndPrintBalancesAsync } from '../print_utils';
 
-const web3Wrapper = new Web3Wrapper(providerEngine);
 (async () => {
     const accounts = await web3Wrapper.getAvailableAddressesAsync();
     const maker = accounts[0];

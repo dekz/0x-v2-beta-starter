@@ -14,7 +14,7 @@
         "clean": "shx rm -rf lib artifacts src/contract_wrappers",
         "copy_artifacts": "copyfiles -u 1 './src/artifacts/**/*' ./lib",
         "download_snapshot": "cross-env download --extract --strip 1 --out 0x_testrpc_snapshot ${npm_package_config_snapshot_url}",
-        "ganache-cli": "cross-env ganache-cli --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
+        "ganache-cli": "cross-env ganache-cli --gasLimit 10000000 --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
         "testrpc": "yarn ganache-cli",
         "scenario:all": "cross-env yarn run build && node ./lib/scenarios/all.js",
         "scenario:fill_order": "cross-env yarn run build && node ./lib/scenarios/fill_order.js",
@@ -23,12 +23,14 @@
         "scenario:match_orders": "cross-env yarn run build && node ./lib/scenarios/match_orders.js",
         "scenario:execute_transaction": "cross-env yarn run build && node ./lib/scenarios/execute_transaction.js",
         "scenario:cancel_orders_up_to": "cross-env yarn run build && node ./lib/scenarios/cancel_orders_up_to.js",
+        "scenario:forwarder_buy_tokens": "cross-env yarn run build && node ./lib/scenarios/forwarder_buy_tokens.js",
+        "scenario:forwarder_buy_erc721_tokens": "cross-env yarn run build && node ./lib/scenarios/forwarder_buy_erc721_tokens.js",
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {
-        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|ERC20Proxy|ERC721Proxy|Exchange|WETH9|ZRXToken).json",
+        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|ERC20Proxy|ERC721Proxy|Exchange|Forwarder|WETH9|ZRXToken).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
-        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/a83f5241dc84984a5db46dd14955e1fa052aad59.zip"
+        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/8fcc7aefa7651311c5a6348101eb023d28799934.zip"
     },
     "author": "",
     "license": "Apache-2.0",
@@ -61,7 +63,7 @@
         "cross-env": "^5.1.4",
         "dirty-chai": "^2.0.1",
         "download-cli": "^1.0.5",
-        "ganache-cli": "^6.1.4",
+        "ganache-cli": "^6.1.6",
         "make-promises-safe": "^1.1.0",
         "npm-run-all": "^4.1.2",
         "shx": "^0.2.2",
