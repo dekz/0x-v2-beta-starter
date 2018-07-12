@@ -38,11 +38,16 @@ export const zrxTokenContract = new ZRXTokenContract(
     artifacts.ZRX.networks[NETWORK_ID].address,
     providerEngine,
 );
-export const forwarderContract = new ForwarderContract(
-    artifacts.Forwarder.compilerOutput.abi,
-    artifacts.Forwarder.networks[NETWORK_ID].address,
-    providerEngine,
-);
+
+let fwdContract = undefined;
+if (artifacts.Forwarder.networks[NETWORK_ID] && artifacts.Forwarder.networks[NETWORK_ID].address) {
+    fwdContract = new ForwarderContract(
+        artifacts.Forwarder.compilerOutput.abi,
+        artifacts.Forwarder.networks[NETWORK_ID].address,
+        providerEngine,
+    );
+}
+export const forwarderContract = fwdContract;
 
 // These are only deployed on Ganache
 export const dummyERC20TokenContracts: DummyERC20TokenContract[] = [];

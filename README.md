@@ -66,3 +66,11 @@ export const RPC_URL = KOVAN_RPC;
 export const NETWORK_ID = KOVAN_NETWORK_ID;
 export const TX_DEFAULTS = KOVAN_TX_DEFAULTS;
 ```
+
+## Custom contracts
+Add custom contracts to src/contracts.
+Update the package.json file to build these contracts as comma separated values, e.g Hello,YOUR_CONTRACT_HERE.
+Update the abi-gen list under configs.abi in package.json to generate a contract wrapper for this contract.
+Compile with `yarn run compile:contracts`
+Generate contract wrappers with `yarn run generate_contract_wrappers`
+
