@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
         "outDir": "lib",
-        "lib": ["es2017"],
+        "lib": ["es2017", "dom"],
+        "module": "commonjs",
+        "target": "es5",
         "skipLibCheck": true,
+        "jsx": "react",
         "typeRoots": ["node_modules/@0xproject/typescript-typings/types", "node_modules/@types"]
     },
     "include": ["src/**/*", "test/**/*"]

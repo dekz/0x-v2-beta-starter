@@ -1,4 +1,6 @@
-import { MnemonicWalletSubprovider } from '@0xproject/subproviders';
+import { MnemonicWalletSubprovider, RPCSubprovider, Web3ProviderEngine } from '@0xproject/subproviders';
+import { BaseContract } from '@0xproject/base-contract';
+import { ContractArtifact } from '@0xproject/sol-compiler';
 import { artifacts } from './artifacts';
 import { BASE_DERIVATION_PATH, NETWORK_ID, RPC_URL, MNEMONIC, GANACHE_NETWORK_ID } from './constants';
 import { ExchangeContract } from './contract_wrappers/exchange';
@@ -8,9 +10,6 @@ import { ZRXTokenContract } from './contract_wrappers/zrx_token';
 import { DummyERC20TokenContract } from './contract_wrappers/dummy_erc20_token';
 import { DummyERC721TokenContract } from './contract_wrappers/dummy_erc721_token';
 
-const Web3ProviderEngine = require('web3-provider-engine');
-const RpcSubprovider = require('web3-provider-engine/subproviders/rpc');
-
 export const mnemonicWallet = new MnemonicWalletSubprovider({
     mnemonic: MNEMONIC,
     baseDerivationPath: BASE_DERIVATION_PATH,
@@ -18,8 +17,19 @@ export const mnemonicWallet = new MnemonicWalletSubprovider({
 
 export const providerEngine = new Web3ProviderEngine();
 providerEngine.addProvider(mnemonicWallet);
-providerEngine.addProvider(new RpcSubprovider({ rpcUrl: RPC_URL }));
+providerEngine.addProvider(new RPCSubprovider(RPC_URL));
 providerEngine.start();
+
+export const buildContract = function<T extends BaseContract>(
+    type: { new (...args: {}[]): T },
+    networkId: number,
+    artifact: ContractArtifact,
+    provider: Web3ProviderEngine,
+): T {
+    const abi = artifact.compilerOutput.abi;
+    const address = artifact.networks[networkId].address;
+    return new type(abi, address, provider);
+};
 
 // Extract the Proxy addresses
 export const zrxTokenAddress = artifacts.ZRX.networks[NETWORK_ID].address;
@@ -47,7 +57,7 @@ if (artifacts.Forwarder.networks[NETWORK_ID] && artifacts.Forwarder.networks[NET
         providerEngine,
     );
 }
-export const forwarderContract = fwdContract;
+export const forwarderContract: ForwarderContract | undefined = fwdContract;
 
 // These are only deployed on Ganache
 export const dummyERC20TokenContracts: DummyERC20TokenContract[] = [];

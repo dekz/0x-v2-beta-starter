@@ -2,3 +2,5 @@ node_modules
 src/contract_wrappers
 lib
 0x_testrpc_snapshot/
+dist/
+.cache/

@@ -16,6 +16,7 @@
         "download_snapshot": "cross-env download --extract --strip 1 --out 0x_testrpc_snapshot ${npm_package_config_snapshot_url}",
         "ganache-cli": "cross-env ganache-cli --gasLimit 10000000 --noVMErrorsOnRPCResponse --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
         "testrpc": "yarn ganache-cli",
+        "marketplace": "cross-env parcel src/marketplace/index.html",
         "compile:contracts": "sol-compiler --artifacts-dir src/artifacts/ --contracts Hello",
         "scenario:all": "cross-env yarn run build && node ./lib/scenarios/all.js",
         "scenario:fill_order": "cross-env yarn run build && node ./lib/scenarios/fill_order.js",
@@ -41,7 +42,7 @@
         "@0xproject/base-contract": "^1.0.0",
         "@0xproject/order-utils": "^1.0.0-rc.1",
         "@0xproject/sol-compiler": "^1.0.0",
-        "@0xproject/subproviders": "^1.0.0",
+        "@0xproject/subproviders": "1.0.0",
         "@0xproject/tslint-config": "^1.0.0",
         "@0xproject/types": "^1.0.0-rc.1",
         "@0xproject/typescript-typings": "^1.0.0",
@@ -50,10 +51,11 @@
         "@types/mocha": "^5.2.2",
         "cli-table": "^0.3.1",
         "copyfiles": "^2.0.0",
-        "ethereum-types": "^0.0.2",
+        "ethereum-types": "^1.0.0",
         "ethers": "3.0.22",
         "lodash": "^4.17.4",
         "ora": "^2.1.0",
+        "react": "^16.4.1",
         "run-s": "^0.0.0",
         "web3-provider-engine": "^14.0.4"
     },
@@ -72,8 +74,12 @@
         "ganache-cli": "^6.1.6",
         "make-promises-safe": "^1.1.0",
         "npm-run-all": "^4.1.2",
+        "parcel-bundler": "^1.9.7",
+        "prettier": "^1.13.7",
+        "react-dom": "^16.4.1",
         "shx": "^0.2.2",
         "tslint": "5.8.0",
+        "tslint-react": "^3.6.0",
         "typescript": "2.7.1"
     }
 }
