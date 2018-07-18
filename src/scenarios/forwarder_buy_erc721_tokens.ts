@@ -1,5 +1,5 @@
 // Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { assetProxyUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xProject/order-utils';
+import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xProject/order-utils';
 import { Order, SignatureType } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
@@ -46,8 +46,8 @@ export async function scenario() {
     const takerAssetAmount = new BigNumber(10);
     const tokenId = generatePseudoRandomSalt();
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetProxyUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
-    const takerAssetData = assetProxyUtils.encodeERC20AssetData(etherTokenContract.address);
+    const makerAssetData = assetDataUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
+    const takerAssetData = assetDataUtils.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
