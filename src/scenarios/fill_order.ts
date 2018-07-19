@@ -1,5 +1,5 @@
 // Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xProject/order-utils';
+import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xproject/order-utils';
 import { Order, SignatureType } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
