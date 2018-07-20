@@ -1,7 +1,7 @@
 import { SignatureType } from '@0xproject/types';
 import * as ethUtil from 'ethereumjs-util';
 import { MnemonicWalletSubprovider } from '@0xproject/subproviders';
-import { EIP712Utils, EIP712Schema, EIP712Types } from '@0xProject/order-utils';
+import { EIP712Utils, EIP712Schema, EIP712Types } from '@0xproject/order-utils';
 import { BigNumber } from '@0xproject/utils';
 
 const EIP712_ZEROEX_TRANSACTION_SCHEMA: EIP712Schema = {
