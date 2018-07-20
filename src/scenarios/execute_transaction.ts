@@ -1,24 +1,23 @@
-// Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xproject/order-utils';
-import { Order, SignatureType } from '@0xproject/types';
+import { ZeroEx } from '0x.js';
+import { MessagePrefixType } from '@0xproject/order-utils';
+import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
+import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS } from '../constants';
 import {
-    erc20ProxyAddress,
     etherTokenContract,
     exchangeContract,
     mnemonicWallet,
     providerEngine,
     zrxTokenContract,
-    web3Wrapper,
+    zrxTokenAddress,
 } from '../contracts';
 import {
+    awaitTransactionMinedSpinnerAsync,
     fetchAndPrintAllowancesAsync,
     fetchAndPrintBalancesAsync,
     printData,
     printScenario,
     printTransaction,
-    awaitTransactionMinedSpinnerAsync,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
 
@@ -31,10 +30,8 @@ export async function scenario(): Promise<void> {
     // function call are signed by the taker. The signed execute transaction data is then submitted by the sender
     // to the 0x Exchange contract.
     printScenario('Execute Transaction fillOrder');
-    const accounts = await web3Wrapper.getAvailableAddressesAsync();
-    const maker = accounts[0];
-    const taker = accounts[1];
-    const sender = accounts[2];
+    const zeroEx = new ZeroEx(providerEngine, { networkId: NETWORK_ID });
+    const [maker, taker, sender] = await zeroEx.getAvailableAddressesAsync();
     const feeRecipientAddress = sender;
     printData('Accounts', [['Maker', maker], ['Taker', taker], ['Sender', sender]]);
 
@@ -47,47 +44,27 @@ export async function scenario(): Promise<void> {
     // the amount the taker pays in fees
     const takerFee = new BigNumber(3);
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetDataUtils.encodeERC20AssetData(zrxTokenContract.address);
-    const takerAssetData = assetDataUtils.encodeERC20AssetData(etherTokenContract.address);
+    const makerAssetData = ZeroEx.encodeERC20AssetData(zrxTokenAddress);
+    const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
+    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenAddress);
     let txHash;
     let txReceipt;
 
     // Approve the new ERC20 Proxy to move ZRX for maker
-    const makerZRXApprovalTxHash = await zrxTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            from: maker,
-        },
-    );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash);
+    const makerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(zrxTokenAddress, maker);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash, zeroEx);
 
     // Approve the new ERC20 Proxy to move ZRX for taker
-    const takerZRXApprovalTxHash = await zrxTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            from: taker,
-        },
-    );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker ZRX Approval', takerZRXApprovalTxHash);
+    const takerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(zrxTokenAddress, taker);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker ZRX Approval', takerZRXApprovalTxHash, zeroEx);
 
     // Approve the new ERC20 Proxy to move WETH for taker
-    const takerWETHApprovalTxHash = await etherTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            from: taker,
-        },
-    );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash);
+    const takerWETHApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(etherTokenAddress, taker);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash, zeroEx);
 
     // Deposit ETH into WETH for the taker
-    const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
-        from: taker,
-        value: takerAssetAmount,
-    });
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
+    const takerWETHDepositTxHash = await zeroEx.etherToken.depositAsync(etherTokenAddress, takerAssetAmount, taker);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash, zeroEx);
 
     printData('Setup', [
         ['Maker ZRX Approval', makerZRXApprovalTxHash],
@@ -107,7 +84,7 @@ export async function scenario(): Promise<void> {
         senderAddress: NULL_ADDRESS,
         feeRecipientAddress,
         expirationTimeSeconds: randomExpiration,
-        salt: generatePseudoRandomSalt(),
+        salt: ZeroEx.generatePseudoRandomSalt(),
         makerAssetAmount,
         takerAssetAmount,
         makerAssetData,
@@ -116,27 +93,25 @@ export async function scenario(): Promise<void> {
         takerFee,
     };
 
+    const exchangeAddress = zeroEx.exchange.getContractAddress();
     const order = {
         ...orderWithoutExchangeAddress,
-        exchangeAddress: exchangeContract.address,
+        exchangeAddress,
     } as Order;
 
     printData('Order', Object.entries(order));
-
     // Print out the Balances and Allowances
+    const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
     await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
     await fetchAndPrintBalancesAsync({ maker, taker, sender }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
-    const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
-    const signatureBuffer = await signingUtils.signMessageAsync(
-        orderHashBuffer,
-        maker,
-        mnemonicWallet,
-        SignatureType.EthSign,
-    );
-    const orderHashHex = `0x${orderHashBuffer.toString('hex')}`;
-    const signature = `0x${signatureBuffer.toString('hex')}`;
+    const orderHashHex = ZeroEx.getOrderHashHex(order);
+    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
+        prefixType: MessagePrefixType.EthSign,
+        shouldAddPrefixBeforeCallingEthSign: false,
+    });
+    const signature = signingUtils.rsvToSignature(ecSignature);
 
     // This is an ABI encoded function call that the taker wishes to perform
     // in this scenario it is a fillOrder
@@ -146,7 +121,7 @@ export async function scenario(): Promise<void> {
         signature,
     );
     // Generate a random salt to mitigate replay attacks
-    const takerTransactionSalt = generatePseudoRandomSalt();
+    const takerTransactionSalt = ZeroEx.generatePseudoRandomSalt();
     // The taker signs the operation data (fillOrder) with the salt
     const takerSignatureBuffer = await signingUtils.newSignedTransactionAsync(
         fillData,
@@ -157,18 +132,17 @@ export async function scenario(): Promise<void> {
     );
     const takerSignature = `0x${takerSignatureBuffer.toString('hex')}`;
     // The sender submits this operation via executeTransaction passing in the signature from the taker
-    txHash = await exchangeContract.executeTransaction.sendTransactionAsync(
+    txHash = await zeroEx.exchange.executeTransactionAsync(
         takerTransactionSalt,
         taker,
         fillData,
         takerSignature,
+        sender,
         {
-            ...TX_DEFAULTS,
-            from: sender,
+            gasLimit: TX_DEFAULTS.gas,
         },
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('executeTransaction', txHash);
-
+    txReceipt = await awaitTransactionMinedSpinnerAsync('executeTransaction', txHash, zeroEx);
     printTransaction('Execute Transaction fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances

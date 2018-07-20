@@ -14,6 +14,16 @@ const EIP712_ZEROEX_TRANSACTION_SCHEMA: EIP712Schema = {
 };
 
 export const signingUtils = {
+    rsvToSignature(ecSignature: ECSignature): string {
+        const signatureBuffer = Buffer.concat([
+            ethUtil.toBuffer(ecSignature.v),
+            ethUtil.toBuffer(ecSignature.r),
+            ethUtil.toBuffer(ecSignature.s),
+            ethUtil.toBuffer(SignatureType.EthSign),
+        ]);
+        const signature = `0x${signatureBuffer.toString('hex')}`;
+        return signature;
+    },
     async signMessageAsync(
         message: Buffer,
         address: string,

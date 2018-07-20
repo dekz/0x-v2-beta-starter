@@ -1,28 +1,23 @@
-// Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xproject/order-utils';
-import { Order, SignatureType } from '@0xproject/types';
+import { ZeroEx } from '0x.js';
+import { MessagePrefixType } from '@0xproject/order-utils';
+import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
+import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS, ZERO } from '../constants';
 import {
-    erc20ProxyAddress,
+    dummyERC721TokenContracts,
     etherTokenContract,
-    exchangeContract,
     forwarderContract,
-    mnemonicWallet,
     providerEngine,
     zrxTokenContract,
-    dummyERC721TokenContracts,
-    erc721ProxyAddress,
-    web3Wrapper,
 } from '../contracts';
 import {
+    awaitTransactionMinedSpinnerAsync,
     fetchAndPrintAllowancesAsync,
     fetchAndPrintBalancesAsync,
+    fetchAndPrintERC721Owner,
     printData,
     printScenario,
     printTransaction,
-    awaitTransactionMinedSpinnerAsync,
-    fetchAndPrintERC721Owner,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
 
@@ -35,51 +30,49 @@ export async function scenario() {
         console.log('No Dummy ERC721 Tokens deployed on this network');
         return;
     }
-    const accounts = await web3Wrapper.getAvailableAddressesAsync();
-    const maker = accounts[0];
-    const taker = accounts[1];
+    const zeroEx = new ZeroEx(providerEngine, { networkId: NETWORK_ID });
+    const [maker, taker] = await zeroEx.getAvailableAddressesAsync();
     printData('Accounts', [['Maker', maker], ['Taker', taker]]);
 
     // the amount the maker is selling in maker asset: 1 ERC721 Token
     const makerAssetAmount = new BigNumber(1);
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(10);
-    const tokenId = generatePseudoRandomSalt();
+    const tokenId = ZeroEx.generatePseudoRandomSalt();
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetDataUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
-    const takerAssetData = assetDataUtils.encodeERC20AssetData(etherTokenContract.address);
+    const makerAssetData = ZeroEx.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
+    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
     // Mint a new ERC721 token for the maker
     const mintTxHash = await dummyERC721TokenContract.mint.sendTransactionAsync(maker, tokenId, { from: maker });
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Mint ERC721 Token', mintTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Mint ERC721 Token', mintTxHash, zeroEx);
     // Approve the new ERC721 Proxy to move the ERC721 tokens for maker
-    const makerERC721ApproveTxHash = await dummyERC721TokenContract.setApprovalForAll.sendTransactionAsync(
-        erc721ProxyAddress,
+    const makerERC721ApprovalTxHash = await zeroEx.erc721Token.setProxyApprovalForAllAsync(
+        dummyERC721TokenContract.address,
+        maker,
         true,
-        {
-            from: maker,
-        },
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ERC721 Token Approval', makerERC721ApproveTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ERC721 Approval', makerERC721ApprovalTxHash, zeroEx);
 
     // With the Forwarding contract, the taker requires 0 additional set up
-    printData('Setup', [['Mint ERC721 Token', mintTxHash], ['Maker ERC721 Token Approval', makerERC721ApproveTxHash]]);
+    printData('Setup', [['Mint ERC721 Token', mintTxHash], ['Maker ERC721 Token Approval', makerERC721ApprovalTxHash]]);
 
     // Set up the Order and fill it
     const tenMinutes = 10 * 60 * 1000;
     const randomExpiration = new BigNumber(Date.now() + tenMinutes);
+    const exchangeAddress = zeroEx.exchange.getContractAddress();
 
     // Create the order
     const order = {
-        exchangeAddress: exchangeContract.address,
+        exchangeAddress,
         makerAddress: maker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
         feeRecipientAddress: NULL_ADDRESS,
         expirationTimeSeconds: randomExpiration,
-        salt: generatePseudoRandomSalt(),
+        salt: ZeroEx.generatePseudoRandomSalt(),
         makerAssetAmount,
         takerAssetAmount,
         makerAssetData,
@@ -91,20 +84,18 @@ export async function scenario() {
     printData('Order', Object.entries(order));
 
     // Print out the Balances and Allowances
+    const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
     await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
     await fetchAndPrintERC721Owner({ maker, taker }, dummyERC721TokenContract, tokenId);
     await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
-    const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
-    const orderHashHex = `0x${orderHashBuffer.toString('hex')}`;
-    const signatureBuffer = await signingUtils.signMessageAsync(
-        orderHashBuffer,
-        maker,
-        mnemonicWallet,
-        SignatureType.EthSign,
-    );
-    const signature = `0x${signatureBuffer.toString('hex')}`;
+    const orderHashHex = ZeroEx.getOrderHashHex(order);
+    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
+        prefixType: MessagePrefixType.EthSign,
+        shouldAddPrefixBeforeCallingEthSign: false,
+    });
+    const signature = signingUtils.rsvToSignature(ecSignature);
 
     txHash = await forwarderContract.marketBuyTokensWithEth.sendTransactionAsync(
         [order],
@@ -120,7 +111,7 @@ export async function scenario() {
             value: order.takerAssetAmount,
         },
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('marketBuyTokensWithEth', txHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('marketBuyTokensWithEth', txHash, zeroEx);
     printTransaction('marketBuyTokensWithEth', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances

@@ -1,24 +1,16 @@
-// Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { assetDataUtils, generatePseudoRandomSalt, orderHashUtils } from '@0xproject/order-utils';
-import { Order, SignatureType } from '@0xproject/types';
+import { ZeroEx } from '0x.js';
+import { MessagePrefixType } from '@0xproject/order-utils';
+import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { NULL_ADDRESS, TX_DEFAULTS, UNLIMITED_ALLOWANCE_IN_BASE_UNITS, ZERO } from '../constants';
+import { NETWORK_ID, NULL_ADDRESS } from '../constants';
+import { etherTokenContract, exchangeContract, providerEngine, zrxTokenContract } from '../contracts';
 import {
-    erc20ProxyAddress,
-    etherTokenContract,
-    exchangeContract,
-    mnemonicWallet,
-    providerEngine,
-    zrxTokenContract,
-    web3Wrapper,
-} from '../contracts';
-import {
+    awaitTransactionMinedSpinnerAsync,
     fetchAndPrintAllowancesAsync,
     fetchAndPrintBalancesAsync,
     printData,
     printScenario,
     printTransaction,
-    awaitTransactionMinedSpinnerAsync,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
 
@@ -27,10 +19,8 @@ export async function scenario() {
     // This order has ZRX fees for both the maker and taker, paid out to the fee recipient.
     // The taker takes this order and fills it via the 0x Exchange contract.
     printScenario('Fill Order with Fees');
-    const accounts = await web3Wrapper.getAvailableAddressesAsync();
-    const maker = accounts[0];
-    const taker = accounts[1];
-    const feeRecipient = accounts[2];
+    const zeroEx = new ZeroEx(providerEngine, { networkId: NETWORK_ID });
+    const [maker, taker, feeRecipient] = await zeroEx.getAvailableAddressesAsync();
     printData('Accounts', [['Maker', maker], ['Taker', taker], ['Fee Recipient', feeRecipient]]);
 
     // the amount the maker is selling in maker asset
@@ -43,49 +33,37 @@ export async function scenario() {
     const takerFee = new BigNumber(1);
 
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetDataUtils.encodeERC20AssetData(zrxTokenContract.address);
-    const takerAssetData = assetDataUtils.encodeERC20AssetData(etherTokenContract.address);
+    const makerAssetData = ZeroEx.encodeERC20AssetData(zrxTokenContract.address);
+    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenContract.address);
     let txHash;
     let txReceipt;
 
     // Approve the new ERC20 Proxy to move ZRX for maker and taker
-    const makerZRXApprovalTxHash = await zrxTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            ...TX_DEFAULTS,
-            from: maker,
-        },
+    const makerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
+        zrxTokenContract.address,
+        maker,
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash);
-    const takerZRXApprovalTxHash = await zrxTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            ...TX_DEFAULTS,
-            from: taker,
-        },
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Maker ZRX Approval', makerZRXApprovalTxHash, zeroEx);
+    const takerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
+        zrxTokenContract.address,
+        taker,
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker ZRX Approval', takerZRXApprovalTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker ZRX Approval', takerZRXApprovalTxHash, zeroEx);
 
     // Approve the new ERC20 Proxy to move WETH for takerAccount
-    const takerWETHApprovalTxHash = await etherTokenContract.approve.sendTransactionAsync(
-        erc20ProxyAddress,
-        UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
-        {
-            ...TX_DEFAULTS,
-            from: taker,
-        },
+    const takerWETHApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
+        etherTokenContract.address,
+        taker,
     );
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Approval', takerWETHApprovalTxHash, zeroEx);
 
     // Deposit ETH into WETH for the taker
-    const takerWETHDepositTxHash = await etherTokenContract.deposit.sendTransactionAsync({
-        ...TX_DEFAULTS,
-        from: taker,
-        value: takerAssetAmount,
-    });
-    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash);
+    const takerWETHDepositTxHash = await zeroEx.etherToken.depositAsync(
+        etherTokenContract.address,
+        takerAssetAmount,
+        taker,
+    );
+    txReceipt = await awaitTransactionMinedSpinnerAsync('Taker WETH Deposit', takerWETHDepositTxHash, zeroEx);
 
     printData('Setup', [
         ['Maker ZRX Approval', makerZRXApprovalTxHash],
@@ -106,7 +84,7 @@ export async function scenario() {
         senderAddress: NULL_ADDRESS,
         feeRecipientAddress: feeRecipient,
         expirationTimeSeconds: randomExpiration,
-        salt: generatePseudoRandomSalt(),
+        salt: ZeroEx.generatePseudoRandomSalt(),
         makerAssetAmount,
         takerAssetAmount,
         makerAssetData,
@@ -118,24 +96,21 @@ export async function scenario() {
     printData('Order', Object.entries(order));
 
     // Print out the Balances and Allowances
+    const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
     await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
     await fetchAndPrintBalancesAsync({ maker, taker, feeRecipient }, [zrxTokenContract, etherTokenContract]);
 
     // Create the order hash
-    const orderHashBuffer = orderHashUtils.getOrderHashBuffer(order);
-    const orderHashHex = `0x${orderHashBuffer.toString('hex')}`;
-    const signatureBuffer = await signingUtils.signMessageAsync(
-        orderHashBuffer,
-        maker,
-        mnemonicWallet,
-        SignatureType.EthSign,
-    );
-    const signature = `0x${signatureBuffer.toString('hex')}`;
-    txHash = await exchangeContract.fillOrder.sendTransactionAsync(order, takerAssetAmount, signature, {
-        ...TX_DEFAULTS,
-        from: taker,
+    const orderHashHex = ZeroEx.getOrderHashHex(order);
+    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
+        prefixType: MessagePrefixType.EthSign,
+        shouldAddPrefixBeforeCallingEthSign: false,
     });
-    txReceipt = await awaitTransactionMinedSpinnerAsync('fillOrder', txHash);
+    const signature = signingUtils.rsvToSignature(ecSignature);
+    const signedOrder = { ...order, signature };
+    // Fill the Order via 0x.js Exchange contract
+    txHash = await zeroEx.exchange.fillOrderAsync(signedOrder, takerAssetAmount, taker);
+    txReceipt = await awaitTransactionMinedSpinnerAsync('fillOrder', txHash, zeroEx);
     printTransaction('fillOrder', txReceipt, [
         ['orderHash', orderHashHex],
         ['takerAssetAmount', takerAssetAmount.toString()],

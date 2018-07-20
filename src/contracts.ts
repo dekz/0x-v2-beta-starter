@@ -1,4 +1,3 @@
-// Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
 import { MnemonicWalletSubprovider } from '@0xproject/subproviders';
 import { artifacts } from './artifacts';
 import { BASE_DERIVATION_PATH, NETWORK_ID, RPC_URL, MNEMONIC, GANACHE_NETWORK_ID } from './constants';
@@ -6,10 +5,8 @@ import { ExchangeContract } from './contract_wrappers/exchange';
 import { ForwarderContract } from './contract_wrappers/forwarder';
 import { WETH9Contract } from './contract_wrappers/weth9';
 import { ZRXTokenContract } from './contract_wrappers/zrx_token';
-import { ERC20ProxyContract } from './contract_wrappers/erc20_proxy';
 import { DummyERC20TokenContract } from './contract_wrappers/dummy_erc20_token';
 import { DummyERC721TokenContract } from './contract_wrappers/dummy_erc721_token';
-import { Web3Wrapper } from '@0xproject/web3-wrapper';
 
 const Web3ProviderEngine = require('web3-provider-engine');
 const RpcSubprovider = require('web3-provider-engine/subproviders/rpc');
@@ -25,42 +22,22 @@ providerEngine.addProvider(new RpcSubprovider({ rpcUrl: RPC_URL }));
 providerEngine.start();
 
 // Extract the Proxy addresses
-export const erc721ProxyAddress = artifacts.ERC721Proxy.networks[NETWORK_ID].address;
-export const erc20ProxyAddress = artifacts.ERC20Proxy.networks[NETWORK_ID].address;
-
-// Create an Exchange Contract from the artifact output
+export const zrxTokenAddress = artifacts.ZRX.networks[NETWORK_ID].address;
 export const exchangeContract = new ExchangeContract(
     artifacts.Exchange.compilerOutput.abi,
     artifacts.Exchange.networks[NETWORK_ID].address,
     providerEngine,
 );
-
-// Create an ZRX Token Contract from the artifact output
-export const zrxTokenContract = new ZRXTokenContract(
-    artifacts.ZRX.compilerOutput.abi,
-    artifacts.ZRX.networks[NETWORK_ID].address,
-    providerEngine,
-);
-
-// Create an WETH Token Contract from the artifact output
 export const etherTokenContract = new WETH9Contract(
     artifacts.EtherToken.compilerOutput.abi,
     artifacts.EtherToken.networks[NETWORK_ID].address,
     providerEngine,
 );
-
-export const erc20ProxyContract = new ERC20ProxyContract(
-    artifacts.ERC20Proxy.compilerOutput.abi,
-    artifacts.ERC20Proxy.networks[NETWORK_ID].address,
+export const zrxTokenContract = new ZRXTokenContract(
+    artifacts.ZRX.compilerOutput.abi,
+    artifacts.ZRX.networks[NETWORK_ID].address,
     providerEngine,
 );
-
-export const erc721ProxyContract = new ERC20ProxyContract(
-    artifacts.ERC721Proxy.compilerOutput.abi,
-    artifacts.ERC721Proxy.networks[NETWORK_ID].address,
-    providerEngine,
-);
-
 export const forwarderContract = new ForwarderContract(
     artifacts.Forwarder.compilerOutput.abi,
     artifacts.Forwarder.networks[NETWORK_ID].address,
@@ -90,7 +67,3 @@ if (NETWORK_ID === GANACHE_NETWORK_ID) {
         );
     }
 }
-
-export const web3Wrapper = new Web3Wrapper(providerEngine);
-web3Wrapper.abiDecoder.addABI(exchangeContract.abi);
-web3Wrapper.abiDecoder.addABI(zrxTokenContract.abi);

@@ -1,9 +1,8 @@
+import { ZeroEx } from '0x.js';
 import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from './constants';
 import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
 import { BigNumber } from '@0xproject/utils';
 import ora = require('ora');
-import { web3Wrapper } from './contracts';
-import { Order } from '@0xproject/types';
 
 const Table = require('cli-table');
 const EMPTY_DATA = [];
@@ -170,13 +169,14 @@ export async function fetchAndPrintAllowancesAsync(
 export async function awaitTransactionMinedSpinnerAsync(
     message: string,
     txHash: string,
+    zeroEx: ZeroEx,
 ): Promise<TransactionReceiptWithDecodedLogs> {
     const spinner = ora(`${message}: ${txHash}`).start();
     if (!spinner['isSpinning']) {
         console.log(message, txHash);
     }
     try {
-        const receipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+        const receipt = await zeroEx.awaitTransactionMinedAsync(txHash);
         receipt.status === 1 ? spinner.stop() : spinner.fail(message);
         return receipt;
     } catch (e) {

@@ -14,7 +14,7 @@
         "clean": "shx rm -rf lib artifacts src/contract_wrappers",
         "copy_artifacts": "copyfiles -u 1 './src/artifacts/**/*' ./lib",
         "download_snapshot": "cross-env download --extract --strip 1 --out 0x_testrpc_snapshot ${npm_package_config_snapshot_url}",
-        "ganache-cli": "cross-env ganache-cli --gasLimit 10000000 --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
+        "ganache-cli": "cross-env ganache-cli --gasLimit 10000000 --noVMErrorsOnRPCResponse --db 0x_testrpc_snapshot --noVMErrorsOnRPCResponse -p 8545 --networkId 50 -m \"${npm_package_config_mnemonic}\"",
         "testrpc": "yarn ganache-cli",
         "scenario:all": "cross-env yarn run build && node ./lib/scenarios/all.js",
         "scenario:fill_order": "cross-env yarn run build && node ./lib/scenarios/fill_order.js",
@@ -35,6 +35,7 @@
     "author": "",
     "license": "Apache-2.0",
     "dependencies": {
+        "0x.js": "1.0.0-rc.2",
         "@0xproject/abi-gen": "^1.0.0",
         "@0xproject/base-contract": "^1.0.0",
         "@0xproject/order-utils": "^1.0.0-rc.1",
