@@ -15,6 +15,11 @@ This project will run against both a local [ganache](https://truffleframework.co
 
 Update the mnemonic in `src/constants.ts` or use the one provided (note if many people use this mnemonic on Kovan then the funds may be drained).
 
+Install dependencies:
+```
+yarn install
+```
+
 Build this package:
 
 ```
