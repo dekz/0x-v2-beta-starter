@@ -131,6 +131,12 @@ export async function scenario(): Promise<void> {
         mnemonicWallet,
     );
     const takerSignature = `0x${takerSignatureBuffer.toString('hex')}`;
+
+    const takerSignatureValid = await zeroEx.isValidSignatureAsync(fillData, takerSignature, taker);
+    if (!takerSignatureValid) {
+        throw new Error('takerSignature invalid');
+    }
+
     // The sender submits this operation via executeTransaction passing in the signature from the taker
     txHash = await zeroEx.exchange.executeTransactionAsync(
         takerTransactionSalt,
