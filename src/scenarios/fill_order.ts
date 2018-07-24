@@ -2,7 +2,7 @@ import { ZeroEx } from '0x.js';
 import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { NETWORK_ID, NULL_ADDRESS, ZERO } from '../constants';
+import { NETWORK_ID, NULL_ADDRESS, ZERO, TX_DEFAULTS } from '../constants';
 import { providerEngine, zrxTokenAddress, zrxTokenContract, etherTokenContract } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
@@ -89,7 +89,7 @@ export async function scenario() {
     const signature = signingUtils.rsvToSignature(ecSignature);
     const signedOrder = { ...order, signature };
     // Fill the Order via 0x.js Exchange contract
-    txHash = await zeroEx.exchange.fillOrderAsync(signedOrder, takerAssetAmount, taker);
+    txHash = await zeroEx.exchange.fillOrderAsync(signedOrder, takerAssetAmount, taker, { gasLimit: TX_DEFAULTS.gas });
     txReceipt = await awaitTransactionMinedSpinnerAsync('fillOrder', txHash, zeroEx);
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 

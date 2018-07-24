@@ -75,10 +75,11 @@ export async function scenario() {
     // Set up the Order and fill it
     const tenMinutes = 10 * 60 * 1000;
     const randomExpiration = new BigNumber(Date.now() + tenMinutes);
+    const exchangeAddress = zeroEx.exchange.getContractAddress();
 
     // Create the order
     const order = {
-        exchangeAddress: exchangeContract.address,
+        exchangeAddress,
         makerAddress: maker,
         takerAddress: NULL_ADDRESS,
         senderAddress: NULL_ADDRESS,
