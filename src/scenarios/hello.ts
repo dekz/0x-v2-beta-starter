@@ -1,27 +1,15 @@
-// Ensure you have linked the latest source via yarn link and are not pulling from NPM for the packages
-import { BigNumber } from '@0xproject/utils';
-import {
-    etherTokenContract,
-    providerEngine,
-    dummyERC20TokenContracts,
-    dummyERC721TokenContracts,
-    web3Wrapper,
-} from '../contracts';
-import {
-    fetchAndPrintAllowancesAsync,
-    fetchAndPrintBalancesAsync,
-    printData,
-    printScenario,
-    printTransaction,
-    awaitTransactionMinedSpinnerAsync,
-} from '../print_utils';
+import { ZeroEx } from '0x.js';
 import { ContractArtifact } from '@0xproject/sol-compiler';
 import * as HelloArtifact from '../artifacts/Hello.json';
-const HelloContractArtifact = (HelloArtifact as any) as ContractArtifact;
+import { dummyERC20TokenContracts, providerEngine } from '../contracts';
 import { HelloContract } from '../contract_wrappers/hello';
+import { printData } from '../print_utils';
+import { NETWORK_ID } from '../constants';
+const HelloContractArtifact = (HelloArtifact as {}) as ContractArtifact;
 
 export async function scenario() {
-    const accounts = await web3Wrapper.getAvailableAddressesAsync();
+    const zeroEx = new ZeroEx(providerEngine, { networkId: NETWORK_ID });
+    const accounts = await zeroEx.getAvailableAddressesAsync();
     const owner = accounts[0];
     // Deploy the Hello Contract
     const hello = await HelloContract.deployFrom0xArtifactAsync(HelloContractArtifact, providerEngine, { from: owner });
@@ -50,7 +38,9 @@ export async function scenario() {
 
 (async () => {
     try {
-        if (!module.parent) await scenario();
+        if (!module.parent) {
+            await scenario();
+        }
     } catch (e) {
         console.log(e);
         providerEngine.stop();
