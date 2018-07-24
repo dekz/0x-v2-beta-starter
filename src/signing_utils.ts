@@ -44,14 +44,7 @@ export const signingUtils = {
             throw new Error(`${signatureType} is not a valid signature type`);
         }
     },
-    async newSignedTransactionAsync(
-        data: string,
-        salt: BigNumber,
-        signerAddress: string,
-        exchangeAddress: string,
-        mnemonicWallet: MnemonicWalletSubprovider,
-        signatureType: SignatureType = SignatureType.EthSign,
-    ): Promise<Buffer> {
+    getExecuteTransactionHex(data: string, salt: BigNumber, signerAddress: string, exchangeAddress: string): string {
         const executeTransactionData = {
             salt,
             signerAddress,
@@ -62,12 +55,23 @@ export const signingUtils = {
             executeTransactionData,
         );
         const eip721MessageBuffer = EIP712Utils.createEIP712Message(executeTransactionHashBuff, exchangeAddress);
+        const messageHex = `0x${eip721MessageBuffer.toString('hex')}`;
+        return messageHex;
+    },
+    async signExecuteTransactionHexAsync(
+        executeTransactionHex: string,
+        signerAddress: string,
+        mnemonicWallet: MnemonicWalletSubprovider,
+        signatureType: SignatureType = SignatureType.EthSign,
+    ): Promise<string> {
+        const eip721MessageBuffer = ethUtil.toBuffer(executeTransactionHex);
         const signature = await signingUtils.signMessageAsync(
             eip721MessageBuffer,
             signerAddress,
             mnemonicWallet,
             signatureType,
         );
-        return signature;
+        const signatureHex = `0x${signature.toString('hex')}`;
+        return signatureHex;
     },
 };

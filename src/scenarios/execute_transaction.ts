@@ -123,20 +123,27 @@ export async function scenario(): Promise<void> {
     // Generate a random salt to mitigate replay attacks
     const takerTransactionSalt = ZeroEx.generatePseudoRandomSalt();
     // The taker signs the operation data (fillOrder) with the salt
-    const takerSignatureBuffer = await signingUtils.newSignedTransactionAsync(
+    const executeTransactionHex = await signingUtils.getExecuteTransactionHex(
         fillData,
         takerTransactionSalt,
         taker,
-        exchangeContract.address,
+        exchangeAddress,
+    );
+    const takerSignatureHex = await signingUtils.signExecuteTransactionHexAsync(
+        executeTransactionHex,
+        taker,
         mnemonicWallet,
     );
-    const takerSignature = `0x${takerSignatureBuffer.toString('hex')}`;
+    const takerSignatureValid = await zeroEx.isValidSignatureAsync(executeTransactionHex, takerSignatureHex, taker);
+    if (!takerSignatureValid) {
+        throw new Error('takerSignature invalid');
+    }
     // The sender submits this operation via executeTransaction passing in the signature from the taker
     txHash = await zeroEx.exchange.executeTransactionAsync(
         takerTransactionSalt,
         taker,
         fillData,
-        takerSignature,
+        takerSignatureHex,
         sender,
         {
             gasLimit: TX_DEFAULTS.gas,
@@ -154,7 +161,9 @@ export async function scenario(): Promise<void> {
 
 (async () => {
     try {
-        if (!module.parent) await scenario();
+        if (!module.parent) {
+            await scenario();
+        }
     } catch (e) {
         console.log(e);
         providerEngine.stop();
