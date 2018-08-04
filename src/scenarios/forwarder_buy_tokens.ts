@@ -78,13 +78,13 @@ export async function scenario() {
     });
     const signature = signingUtils.rsvToSignature(ecSignature);
 
-    txHash = await forwarderContract.marketBuyTokensWithEth.sendTransactionAsync(
+    txHash = await forwarderContract.marketBuyOrdersWithEth.sendTransactionAsync(
         [order],
+        order.makerAssetAmount,
         [signature],
         [],
         [],
-        order.makerAssetAmount,
-        0,
+        new BigNumber(0),
         NULL_ADDRESS,
         {
             ...TX_DEFAULTS,
