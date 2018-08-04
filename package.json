@@ -30,15 +30,15 @@
     "config": {
         "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|ERC20Proxy|ERC721Proxy|Exchange|Forwarder|WETH9|ZRXToken).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
-        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/8fcc7aefa7651311c5a6348101eb023d28799934.zip"
+        "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/2c62504b79315099346665225d3637662ff87db6.zip"
     },
     "author": "",
     "license": "Apache-2.0",
     "dependencies": {
-        "0x.js": "1.0.0-rc.2",
+        "0x.js": "1.0.1-rc.2",
         "@0xproject/abi-gen": "^1.0.0",
         "@0xproject/base-contract": "^1.0.0",
-        "@0xproject/order-utils": "^1.0.0-rc.1",
+        "@0xproject/order-utils": "^1.0.1-rc.2",
         "@0xproject/sol-compiler": "^1.0.0",
         "@0xproject/subproviders": "^1.0.0",
         "@0xproject/tslint-config": "^1.0.0",
