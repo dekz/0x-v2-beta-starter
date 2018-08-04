@@ -1,5 +1,5 @@
 import { ZeroEx } from '0x.js';
-import { assetDataUtils, MessagePrefixType } from '@0xproject/order-utils';
+import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS, ZERO } from '../constants';
@@ -34,7 +34,7 @@ export async function scenario() {
     const takerAssetAmount = new BigNumber(10);
     const tokenId = ZeroEx.generatePseudoRandomSalt();
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = assetDataUtils.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
+    const makerAssetData = ZeroEx.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
     const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
     const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenAddress);
     let txHash;
