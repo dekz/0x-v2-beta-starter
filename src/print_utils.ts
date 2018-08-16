@@ -90,17 +90,21 @@ export function printData(header: string, tableData: string[][]): void {
     pushAndPrint(table, tableData);
 }
 
-export async function fetchAndPrintBalancesAsync(accountDetails: {}, contracts: any[]): Promise<void> {
+export async function fetchAndPrintContractBalancesAsync(
+    accountDetails: {},
+    contractAddresses: { [tokenSymbol: string]: string },
+    zeroEx: ZeroEx,
+): Promise<void> {
     const flattenedBalances = [];
     const flattenedAccounts = Object.keys(accountDetails).map(
         account => account.charAt(0).toUpperCase() + account.slice(1),
     );
-    for (const token of contracts) {
-        const tokenSymbol = await token.symbol.callAsync();
+    for (const tokenSymbol in contractAddresses) {
         const balances = [tokenSymbol];
+        const tokenAddress = contractAddresses[tokenSymbol];
         for (const account in accountDetails) {
             const address = accountDetails[account];
-            const balance = await token.balanceOf.callAsync(address);
+            const balance = await zeroEx.erc20Token.getBalanceAsync(tokenAddress, address);
             balances.push(balance.toString());
         }
         flattenedBalances.push(balances);
@@ -139,21 +143,22 @@ export async function fetchAndPrintERC721Owner(
     pushAndPrint(table, flattenedBalances);
 }
 
-export async function fetchAndPrintAllowancesAsync(
+export async function fetchAndPrintContractAllowancesAsync(
     accountDetails: {},
-    contracts: any[],
+    contractAddresses: { [tokenSymbol: string]: string },
     spender: string,
+    zeroEx: ZeroEx,
 ): Promise<void> {
     const flattenedAllowances = [];
     const flattenedAccounts = Object.keys(accountDetails).map(
         account => account.charAt(0).toUpperCase() + account.slice(1),
     );
-    for (const token of contracts) {
-        const tokenSymbol = await token.symbol.callAsync();
+    for (const tokenSymbol in contractAddresses) {
         const allowances = [tokenSymbol];
+        const tokenAddress = contractAddresses[tokenSymbol];
         for (const account in accountDetails) {
             const address = accountDetails[account];
-            const balance = await token.allowance.callAsync(address, spender);
+            const balance = await zeroEx.erc20Token.getAllowanceAsync(tokenAddress, address, spender);
             allowances.push(balance.toString());
         }
         flattenedAllowances.push(allowances);

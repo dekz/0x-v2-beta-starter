@@ -1,18 +1,16 @@
 import { ZeroEx } from '0x.js';
-import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NETWORK_ID, NULL_ADDRESS, ZERO, TX_DEFAULTS } from '../constants';
-import { providerEngine, zrxTokenAddress, zrxTokenContract, etherTokenContract } from '../contracts';
+import { providerEngine, zrxTokenAddress } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
-    fetchAndPrintAllowancesAsync,
-    fetchAndPrintBalancesAsync,
     printData,
     printScenario,
     printTransaction,
+    fetchAndPrintContractBalancesAsync,
+    fetchAndPrintContractAllowancesAsync,
 } from '../print_utils';
-import { signingUtils } from '../signing_utils';
 
 export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling ZRX for WETH.
@@ -77,16 +75,21 @@ export async function scenario() {
 
     // Print out the Balances and Allowances
     const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
-    await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractAllowancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        erc20ProxyAddress,
+        zeroEx,
+    );
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
     // Create the order hash
     const orderHashHex = ZeroEx.getOrderHashHex(order);
-    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
-        prefixType: MessagePrefixType.EthSign,
-        shouldAddPrefixBeforeCallingEthSign: false,
-    });
-    const signature = signingUtils.rsvToSignature(ecSignature);
+    const signature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker);
     const signedOrder = { ...order, signature };
     // Fill the Order via 0x.js Exchange contract
     txHash = await zeroEx.exchange.fillOrderAsync(signedOrder, takerAssetAmount, taker, { gasLimit: TX_DEFAULTS.gas });
@@ -94,7 +97,11 @@ export async function scenario() {
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
     // Stop the Provider Engine
     providerEngine.stop();

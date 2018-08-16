@@ -1,23 +1,15 @@
 import { ZeroEx } from '0x.js';
-import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS } from '../constants';
-import {
-    etherTokenContract,
-    exchangeContract,
-    mnemonicWallet,
-    providerEngine,
-    zrxTokenContract,
-    zrxTokenAddress,
-} from '../contracts';
+import { exchangeContract, mnemonicWallet, providerEngine, zrxTokenAddress } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
-    fetchAndPrintAllowancesAsync,
-    fetchAndPrintBalancesAsync,
     printData,
     printScenario,
     printTransaction,
+    fetchAndPrintContractAllowancesAsync,
+    fetchAndPrintContractBalancesAsync,
 } from '../print_utils';
 import { signingUtils } from '../signing_utils';
 
@@ -102,16 +94,21 @@ export async function scenario(): Promise<void> {
     printData('Order', Object.entries(order));
     // Print out the Balances and Allowances
     const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
-    await fetchAndPrintAllowancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker, sender }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractAllowancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        erc20ProxyAddress,
+        zeroEx,
+    );
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
     // Create the order hash
     const orderHashHex = ZeroEx.getOrderHashHex(order);
-    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
-        prefixType: MessagePrefixType.EthSign,
-        shouldAddPrefixBeforeCallingEthSign: false,
-    });
-    const signature = signingUtils.rsvToSignature(ecSignature);
+    const signature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker);
 
     // This is an ABI encoded function call that the taker wishes to perform
     // in this scenario it is a fillOrder
@@ -153,7 +150,11 @@ export async function scenario(): Promise<void> {
     printTransaction('Execute Transaction fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker, sender }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
     // Stop the Provider Engine
     providerEngine.stop();

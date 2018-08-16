@@ -2,7 +2,7 @@ import { ZeroEx } from '0x.js';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NETWORK_ID, NULL_ADDRESS, ZERO } from '../constants';
-import { etherTokenContract, providerEngine, zrxTokenContract } from '../contracts';
+import { providerEngine, zrxTokenContract } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
     printData,
@@ -24,8 +24,9 @@ export async function scenario() {
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(10);
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
+    const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
     const makerAssetData = ZeroEx.encodeERC20AssetData(zrxTokenContract.address);
-    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenContract.address);
+    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenAddress);
 
     // Set up the Order and fill it
     const oneMinute = 60 * 1000;

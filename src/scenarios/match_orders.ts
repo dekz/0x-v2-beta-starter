@@ -1,18 +1,16 @@
 import { ZeroEx } from '0x.js';
-import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
-import { NETWORK_ID, NULL_ADDRESS, ZERO, TX_DEFAULTS } from '../constants';
-import { etherTokenContract, providerEngine, zrxTokenContract } from '../contracts';
+import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS, ZERO } from '../constants';
+import { providerEngine, zrxTokenAddress } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
-    fetchAndPrintAllowancesAsync,
-    fetchAndPrintBalancesAsync,
+    fetchAndPrintContractAllowancesAsync,
+    fetchAndPrintContractBalancesAsync,
     printData,
     printScenario,
     printTransaction,
 } from '../print_utils';
-import { signingUtils } from '../signing_utils';
 
 export async function scenario(): Promise<void> {
     // In this scenario, the maker creates and signs an order (leftOrder) for selling ZRX for WETH.
@@ -30,21 +28,22 @@ export async function scenario(): Promise<void> {
     // the amount the maker is wanting in taker asset
     const takerAssetAmount = new BigNumber(4);
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = ZeroEx.encodeERC20AssetData(zrxTokenContract.address);
-    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenContract.address);
+    const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
+    const makerAssetData = ZeroEx.encodeERC20AssetData(zrxTokenAddress);
+    const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenAddress);
     let txHash;
     let txReceipt;
 
     // Approve the new ERC20 Proxy to move ZRX for makerAccount
     const leftMakerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
-        zrxTokenContract.address,
+        zrxTokenAddress,
         leftMaker,
     );
     txReceipt = await awaitTransactionMinedSpinnerAsync('Left Maker ZRX Approval', leftMakerZRXApprovalTxHash, zeroEx);
 
     // Approve the new ERC20 Proxy to move ZRX for rightMaker
     const rightMakerZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
-        zrxTokenContract.address,
+        zrxTokenAddress,
         rightMaker,
     );
     txReceipt = await awaitTransactionMinedSpinnerAsync(
@@ -55,14 +54,14 @@ export async function scenario(): Promise<void> {
 
     // Approve the new ERC20 Proxy to move ZRX for matcherAccount
     const matcherZRXApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
-        zrxTokenContract.address,
+        zrxTokenAddress,
         matcherAccount,
     );
     txReceipt = await awaitTransactionMinedSpinnerAsync('Matcher ZRX Approval', matcherZRXApprovalTxHash, zeroEx);
 
     // Approve the new ERC20 Proxy to move WETH for rightMaker
     const rightMakerWETHApprovalTxHash = await zeroEx.erc20Token.setUnlimitedProxyAllowanceAsync(
-        etherTokenContract.address,
+        etherTokenAddress,
         rightMaker,
     );
     txReceipt = await awaitTransactionMinedSpinnerAsync(
@@ -73,7 +72,7 @@ export async function scenario(): Promise<void> {
 
     // Deposit ETH into WETH for the taker
     const rightMakerWETHDepositTxHash = await zeroEx.etherToken.depositAsync(
-        etherTokenContract.address,
+        etherTokenAddress,
         takerAssetAmount,
         rightMaker,
     );
@@ -134,29 +133,27 @@ export async function scenario(): Promise<void> {
     printData('Right Order', Object.entries(rightOrder));
 
     const leftOrderHashHex = ZeroEx.getOrderHashHex(leftOrder);
-    const leftECSignature = await zeroEx.ecSignOrderHashAsync(leftOrderHashHex, leftMaker, {
-        prefixType: MessagePrefixType.EthSign,
-        shouldAddPrefixBeforeCallingEthSign: false,
-    });
-    const leftOrderSignature = signingUtils.rsvToSignature(leftECSignature);
+    const leftOrderSignature = await zeroEx.ecSignOrderHashAsync(leftOrderHashHex, leftMaker);
     const leftSignedOrder = { ...leftOrder, signature: leftOrderSignature };
 
     const rightOrderHashHex = ZeroEx.getOrderHashHex(rightOrder);
-    const rightECSignature = await zeroEx.ecSignOrderHashAsync(rightOrderHashHex, rightMaker, {
-        prefixType: MessagePrefixType.EthSign,
-        shouldAddPrefixBeforeCallingEthSign: false,
-    });
-    const rightOrderSignature = signingUtils.rsvToSignature(rightECSignature);
+    const rightOrderSignature = await zeroEx.ecSignOrderHashAsync(rightOrderHashHex, rightMaker);
     const rightSignedOrder = { ...rightOrder, signature: rightOrderSignature };
 
     // Print out the Balances and Allowances
     const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
-    await fetchAndPrintAllowancesAsync(
+
+    await fetchAndPrintContractAllowancesAsync(
         { leftMaker, rightMaker },
-        [zrxTokenContract, etherTokenContract],
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
         erc20ProxyAddress,
+        zeroEx,
     );
-    await fetchAndPrintBalancesAsync({ leftMaker, rightMaker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractBalancesAsync(
+        { leftMaker, rightMaker, matcherAccount },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
     // Match the orders via 0x Exchange
     txHash = await zeroEx.exchange.matchOrdersAsync(leftSignedOrder, rightSignedOrder, matcherAccount, {
         gasLimit: TX_DEFAULTS.gas,
@@ -169,7 +166,11 @@ export async function scenario(): Promise<void> {
     ]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ leftMaker, rightMaker, matcherAccount }, [zrxTokenContract, etherTokenContract]);
+    await fetchAndPrintContractBalancesAsync(
+        { leftMaker, rightMaker, matcherAccount },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
     // Stop the Provider Engine
     providerEngine.stop();

@@ -1,19 +1,17 @@
 import { ZeroEx } from '0x.js';
-import { MessagePrefixType } from '@0xproject/order-utils';
 import { Order } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { NETWORK_ID, NULL_ADDRESS, TX_DEFAULTS, ZERO } from '../constants';
-import { dummyERC721TokenContracts, providerEngine, etherTokenContract } from '../contracts';
+import { dummyERC721TokenContracts, providerEngine } from '../contracts';
 import {
     awaitTransactionMinedSpinnerAsync,
-    fetchAndPrintAllowancesAsync,
-    fetchAndPrintBalancesAsync,
+    fetchAndPrintContractAllowancesAsync,
+    fetchAndPrintContractBalancesAsync,
     fetchAndPrintERC721Owner,
     printData,
     printScenario,
     printTransaction,
 } from '../print_utils';
-import { signingUtils } from '../signing_utils';
 
 export async function scenario() {
     // In this scenario, the maker creates and signs an order for selling an ERC721 token for WETH.
@@ -34,8 +32,8 @@ export async function scenario() {
     const takerAssetAmount = new BigNumber(10);
     const tokenId = ZeroEx.generatePseudoRandomSalt();
     // 0x v2 uses asset data to encode the correct proxy type and additional parameters
-    const makerAssetData = ZeroEx.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
     const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
+    const makerAssetData = ZeroEx.encodeERC721AssetData(dummyERC721TokenContract.address, tokenId);
     const takerAssetData = ZeroEx.encodeERC20AssetData(etherTokenAddress);
     let txHash;
     let txReceipt;
@@ -93,17 +91,22 @@ export async function scenario() {
 
     // Print out the Balances and Allowances
     const erc20ProxyAddress = zeroEx.erc20Proxy.getContractAddress();
-    await fetchAndPrintAllowancesAsync({ maker, taker }, [etherTokenContract], erc20ProxyAddress);
-    await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
+    await fetchAndPrintContractAllowancesAsync(
+        { maker, taker },
+        { WETH: etherTokenAddress },
+        erc20ProxyAddress,
+        zeroEx,
+    );
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ERC721: dummyERC721TokenContract.address, WETH: etherTokenAddress },
+        zeroEx,
+    );
     await fetchAndPrintERC721Owner({ maker, taker }, dummyERC721TokenContract, tokenId);
 
     // Create the order hash
     const orderHashHex = ZeroEx.getOrderHashHex(order);
-    const ecSignature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker, {
-        prefixType: MessagePrefixType.EthSign,
-        shouldAddPrefixBeforeCallingEthSign: false,
-    });
-    const signature = signingUtils.rsvToSignature(ecSignature);
+    const signature = await zeroEx.ecSignOrderHashAsync(orderHashHex, maker);
     const signedOrder = { ...order, signature };
     // Fill the Order via 0x.js Exchange contract
     txHash = await zeroEx.exchange.fillOrderAsync(signedOrder, takerAssetAmount, taker, { gasLimit: TX_DEFAULTS.gas });
@@ -111,7 +114,11 @@ export async function scenario() {
     printTransaction('fillOrder', txReceipt, [['orderHash', orderHashHex]]);
 
     // Print the Balances
-    await fetchAndPrintBalancesAsync({ maker, taker }, [dummyERC721TokenContract, etherTokenContract]);
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ERC721: dummyERC721TokenContract.address, WETH: etherTokenAddress },
+        zeroEx,
+    );
     await fetchAndPrintERC721Owner({ maker, taker }, dummyERC721TokenContract, tokenId);
 
     // Stop the Provider Engine

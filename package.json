@@ -1,11 +1,11 @@
 {
-    "name": "0x-v2-beta-starter-project",
+    "name": "0x-starter-project",
     "version": "0.0.1",
     "main": "lib/scenarios/fill_order.js",
     "engines": {
         "node": ">=6.12"
     },
-    "description": "0x v2 beta",
+    "description": "0x starter project",
     "scripts": {
         "lint": "tslint --project . --exclude **/src/contract_wrappers/**/*",
         "watch_without_deps": "cross-env yarn pre_build && tsc -w",
@@ -28,21 +28,21 @@
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {
-        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|ERC20Proxy|ERC721Proxy|Exchange|Forwarder|WETH9|ZRXToken).json",
+        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|Exchange|Forwarder|WETH9|ZRXToken).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
         "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/2c62504b79315099346665225d3637662ff87db6.zip"
     },
     "author": "",
     "license": "Apache-2.0",
     "dependencies": {
-        "0x.js": "1.0.1-rc.2",
+        "0x.js": "1.0.1-rc.3",
         "@0xproject/abi-gen": "^1.0.0",
         "@0xproject/base-contract": "^1.0.0",
-        "@0xproject/order-utils": "^1.0.1-rc.2",
+        "@0xproject/order-utils": "^1.0.1-rc.3",
         "@0xproject/sol-compiler": "^1.0.0",
         "@0xproject/subproviders": "^1.0.0",
         "@0xproject/tslint-config": "^1.0.0",
-        "@0xproject/types": "^1.0.0-rc.1",
+        "@0xproject/types": "^1.0.1-rc.4",
         "@0xproject/typescript-typings": "^1.0.0",
         "@0xproject/utils": "^1.0.0",
         "@0xproject/web3-wrapper": "^1.0.0",
@@ -73,6 +73,6 @@
         "npm-run-all": "^4.1.2",
         "shx": "^0.2.2",
         "tslint": "5.8.0",
-        "typescript": "2.7.1"
+        "typescript": "3.0.1"
     }
 }

@@ -1,14 +1,19 @@
 import { ZeroEx } from '0x.js';
-import { etherTokenContract, providerEngine, zrxTokenContract } from '../contracts';
-import { fetchAndPrintBalancesAsync, printData } from '../print_utils';
 import { NETWORK_ID } from '../constants';
+import { providerEngine, zrxTokenAddress } from '../contracts';
+import { fetchAndPrintContractBalancesAsync, printData } from '../print_utils';
 
 (async () => {
     const zeroEx = new ZeroEx(providerEngine, { networkId: NETWORK_ID });
     const [maker, taker] = await zeroEx.getAvailableAddressesAsync();
     printData('Accounts', [['Maker', maker], ['Taker', taker]]);
+    const etherTokenAddress = zeroEx.etherToken.getContractAddressIfExists();
+    await fetchAndPrintContractBalancesAsync(
+        { maker, taker },
+        { ZRX: zrxTokenAddress, WETH: etherTokenAddress },
+        zeroEx,
+    );
 
-    await fetchAndPrintBalancesAsync({ maker, taker }, [zrxTokenContract, etherTokenContract]);
     console.log('');
     const exchangeAddress = zeroEx.exchange.getContractAddress();
 
