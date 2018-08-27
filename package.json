@@ -28,36 +28,28 @@
         "generate_contract_wrappers": "cross-env abi-gen --abis ${npm_package_config_abis} --template ./contract_templates/contract.handlebars --partials './contract_templates/partials/**/*.handlebars' --output src/contract_wrappers --backend ethers"
     },
     "config": {
-        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|Exchange|Forwarder|WETH9|ZRXToken).json",
+        "abis": "./src/artifacts/@(DummyERC20Token|DummyERC721Token|Forwarder|WETH9).json",
         "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
         "snapshot_url": "https://s3.amazonaws.com/testrpc-shapshots/2c62504b79315099346665225d3637662ff87db6.zip"
     },
     "author": "",
     "license": "Apache-2.0",
     "dependencies": {
-        "0x.js": "1.0.1-rc.3",
-        "@0xproject/abi-gen": "^1.0.0",
-        "@0xproject/base-contract": "^1.0.0",
-        "@0xproject/order-utils": "^1.0.1-rc.3",
-        "@0xproject/sol-compiler": "^1.0.0",
-        "@0xproject/subproviders": "^1.0.0",
+        "0x.js": "1.0.1-rc.5",
         "@0xproject/tslint-config": "^1.0.0",
-        "@0xproject/types": "^1.0.1-rc.4",
-        "@0xproject/typescript-typings": "^1.0.0",
-        "@0xproject/utils": "^1.0.0",
-        "@0xproject/web3-wrapper": "^1.0.0",
         "@types/mocha": "^5.2.2",
         "cli-table": "^0.3.1",
         "copyfiles": "^2.0.0",
-        "ethereum-types": "^0.0.2",
         "ethers": "3.0.22",
-        "lodash": "^4.17.4",
+        "lodash": "^4.17.5",
         "ora": "^2.1.0",
         "run-s": "^0.0.0",
-        "web3-provider-engine": "^14.0.4"
+        "web3-provider-engine": "^14.0.6"
     },
     "devDependencies": {
-        "@0xproject/dev-utils": "^1.0.0",
+        "@0xproject/abi-gen": "1.0.6",
+        "@0xproject/dev-utils": "^1.0.5",
+        "@0xproject/sol-compiler": "1.1.0",
         "@types/react": "^16.4.6",
         "@types/react-dom": "^16.0.6",
         "bloomer": "^0.6.3",

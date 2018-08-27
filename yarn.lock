@@ -2,97 +2,77 @@
 # yarn lockfile v1
 
 
-"0x.js@1.0.1-rc.3":
-  version "1.0.1-rc.3"
-  resolved "https://registry.yarnpkg.com/0x.js/-/0x.js-1.0.1-rc.3.tgz#5af753e0e606736b256eb08fe4ca9b34e7ded283"
+"0x.js@1.0.1-rc.5":
+  version "1.0.1-rc.5"
+  resolved "https://registry.yarnpkg.com/0x.js/-/0x.js-1.0.1-rc.5.tgz#eb1b1f0fdb9314a31240d7cb9990b5f99bd0910e"
   dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/base-contract" "^2.0.0-rc.1"
-    "@0xproject/contract-wrappers" "^1.0.1-rc.3"
-    "@0xproject/order-utils" "^1.0.1-rc.3"
-    "@0xproject/sol-compiler" "^1.0.5"
-    "@0xproject/subproviders" "^1.0.5"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
-    ethereum-types "^1.0.4"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/base-contract" "^2.0.0"
+    "@0xproject/contract-wrappers" "^1.0.1-rc.4"
+    "@0xproject/order-utils" "^1.0.1-rc.4"
+    "@0xproject/order-watcher" "^1.0.1-rc.4"
+    "@0xproject/subproviders" "^2.0.0"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    ethereum-types "^1.0.5"
     ethers "3.0.22"
     lodash "^4.17.5"
+    web3-provider-engine "14.0.6"
 
-"@0xproject/abi-gen@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/abi-gen/-/abi-gen-1.0.0.tgz#0eed8bee91b19b128a471759c8f818864588f63e"
+"@0xproject/abi-gen@1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@0xproject/abi-gen/-/abi-gen-1.0.6.tgz#34640100217bb66c37c28482c2eb81a64ded6911"
   dependencies:
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
     chalk "^2.3.0"
-    ethereum-types "^1.0.0"
+    ethereum-types "^1.0.5"
     glob "^7.1.2"
     handlebars "^4.0.11"
-    lodash "^4.17.4"
+    lodash "^4.17.5"
     mkdirp "^0.5.1"
     sleep "^5.1.1"
     tmp "^0.0.33"
     to-snake-case "^1.0.0"
     yargs "^10.0.3"
 
-"@0xproject/assert@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/assert/-/assert-1.0.0.tgz#e50e3012b935db4e61824dba62415854391ca76f"
+"@0xproject/assert@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@0xproject/assert/-/assert-1.0.6.tgz#871e5d3426ae5324ab2cee93235c6b067f6610fb"
   dependencies:
-    "@0xproject/json-schemas" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    lodash "^4.17.4"
-    valid-url "^1.0.9"
-
-"@0xproject/assert@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/assert/-/assert-1.0.5.tgz#1a5e9e42bab808035a21fac619296238652e4ca9"
-  dependencies:
-    "@0xproject/json-schemas" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
     lodash "^4.17.5"
     valid-url "^1.0.9"
 
-"@0xproject/base-contract@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/base-contract/-/base-contract-1.0.0.tgz#05b35dea9b6738e64c682e42796ac2de3fc5d943"
+"@0xproject/base-contract@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@0xproject/base-contract/-/base-contract-2.0.0.tgz#d399721de39ae8128055d0e8a443ac2b4d178365"
   dependencies:
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    "@0xproject/web3-wrapper" "^1.0.0"
-    ethereum-types "^1.0.0"
-    ethers "3.0.22"
-    lodash "^4.17.4"
-
-"@0xproject/base-contract@^2.0.0-rc.1":
-  version "2.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@0xproject/base-contract/-/base-contract-2.0.0-rc.1.tgz#33aa3a5fb5634c09cc1b763939f02494c84c7b3d"
-  dependencies:
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
-    ethereum-types "^1.0.4"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    ethereum-types "^1.0.5"
     ethers "3.0.22"
     lodash "^4.17.5"
 
-"@0xproject/contract-wrappers@^1.0.1-rc.3":
-  version "1.0.1-rc.3"
-  resolved "https://registry.yarnpkg.com/@0xproject/contract-wrappers/-/contract-wrappers-1.0.1-rc.3.tgz#9ebbabab1f5a90cad9ee532cb60f7ad3ca32a268"
+"@0xproject/contract-wrappers@^1.0.1-rc.4":
+  version "1.0.1-rc.4"
+  resolved "https://registry.yarnpkg.com/@0xproject/contract-wrappers/-/contract-wrappers-1.0.1-rc.4.tgz#7cd69d9a54238933c851e0aacc2e2c7db31ed32b"
   dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/base-contract" "^2.0.0-rc.1"
-    "@0xproject/fill-scenarios" "^1.0.1-rc.3"
-    "@0xproject/json-schemas" "^1.0.1-rc.4"
-    "@0xproject/order-utils" "^1.0.1-rc.3"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
-    ethereum-types "^1.0.4"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/base-contract" "^2.0.0"
+    "@0xproject/fill-scenarios" "^1.0.1-rc.4"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/order-utils" "^1.0.1-rc.4"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    ethereum-types "^1.0.5"
     ethereumjs-blockstream "5.0.0"
     ethereumjs-util "^5.1.1"
     ethers "3.0.22"
@@ -100,107 +80,94 @@
     lodash "^4.17.5"
     uuid "^3.1.0"
 
-"@0xproject/dev-utils@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/dev-utils/-/dev-utils-1.0.0.tgz#e7aa5ac21608ebc2cd61b397c6f02f30af0fa341"
+"@0xproject/dev-utils@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@0xproject/dev-utils/-/dev-utils-1.0.5.tgz#a6ebaa8b480a187eba51dbc217104c18a3db52c6"
   dependencies:
-    "@0xproject/subproviders" "^1.0.0"
-    "@0xproject/types" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    "@0xproject/web3-wrapper" "^1.0.0"
-    ethereum-types "^1.0.0"
-    lodash "^4.17.4"
+    "@0xproject/subproviders" "^2.0.0"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    ethereum-types "^1.0.5"
+    lodash "^4.17.5"
 
-"@0xproject/fill-scenarios@^1.0.1-rc.3":
-  version "1.0.1-rc.3"
-  resolved "https://registry.yarnpkg.com/@0xproject/fill-scenarios/-/fill-scenarios-1.0.1-rc.3.tgz#100baa66b4fa352c3b4efc3da8c5bceaf2123e10"
+"@0xproject/fill-scenarios@^1.0.1-rc.4":
+  version "1.0.1-rc.4"
+  resolved "https://registry.yarnpkg.com/@0xproject/fill-scenarios/-/fill-scenarios-1.0.1-rc.4.tgz#0b3fd16061c6980db993095938785b5e809a3284"
   dependencies:
-    "@0xproject/base-contract" "^2.0.0-rc.1"
-    "@0xproject/order-utils" "^1.0.1-rc.3"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
-    ethereum-types "^1.0.4"
+    "@0xproject/base-contract" "^2.0.0"
+    "@0xproject/order-utils" "^1.0.1-rc.4"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    ethereum-types "^1.0.5"
     ethers "3.0.22"
     lodash "^4.17.5"
 
-"@0xproject/json-schemas@^1.0.0-rc.1":
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@0xproject/json-schemas/-/json-schemas-1.0.0-rc.1.tgz#66232099553ac5ebe4667310c30c4b203fd2e690"
+"@0xproject/json-schemas@^1.0.1-rc.5":
+  version "1.0.1-rc.5"
+  resolved "https://registry.yarnpkg.com/@0xproject/json-schemas/-/json-schemas-1.0.1-rc.5.tgz#4ae2e13ee4ae8b19e9432c2ef40d6d3ff8ebdbb9"
   dependencies:
-    "@0xproject/typescript-typings" "^1.0.0"
+    "@0xproject/typescript-typings" "^1.0.5"
     "@types/node" "^8.0.53"
     jsonschema "^1.2.0"
     lodash.values "^4.3.0"
 
-"@0xproject/json-schemas@^1.0.1-rc.4":
+"@0xproject/order-utils@^1.0.1-rc.4":
   version "1.0.1-rc.4"
-  resolved "https://registry.yarnpkg.com/@0xproject/json-schemas/-/json-schemas-1.0.1-rc.4.tgz#9519263bb453f2c1c83c0cdc519be37d3bb679a1"
+  resolved "https://registry.yarnpkg.com/@0xproject/order-utils/-/order-utils-1.0.1-rc.4.tgz#7d5f14bfcf7adbe1b37a78b88a5633dd238fea4b"
   dependencies:
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@types/node" "^8.0.53"
-    jsonschema "^1.2.0"
-    lodash.values "^4.3.0"
-
-"@0xproject/order-utils@^1.0.1-rc.3", "@0xproject/order-utils@^1.0.1-rc.4":
-  version "1.0.1-rc.3"
-  resolved "https://registry.yarnpkg.com/@0xproject/order-utils/-/order-utils-1.0.1-rc.3.tgz#c9ad4996c60ef3222a2141b5cc07b0fb292cc360"
-  dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/base-contract" "^2.0.0-rc.1"
-    "@0xproject/json-schemas" "^1.0.1-rc.4"
-    "@0xproject/sol-compiler" "^1.0.5"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/base-contract" "^2.0.0"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
     "@types/node" "^8.0.53"
     bn.js "^4.11.8"
-    ethereum-types "^1.0.4"
+    ethereum-types "^1.0.5"
     ethereumjs-abi "0.6.5"
     ethereumjs-util "^5.1.1"
     ethers "3.0.22"
     lodash "^4.17.5"
 
-"@0xproject/sol-compiler@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/sol-compiler/-/sol-compiler-1.0.0.tgz#3f2ee50be45a226629a8e51f260a6c534083532c"
+"@0xproject/order-watcher@^1.0.1-rc.4":
+  version "1.0.1-rc.4"
+  resolved "https://registry.yarnpkg.com/@0xproject/order-watcher/-/order-watcher-1.0.1-rc.4.tgz#48e95399402b7ae9779560c6e660701bcd260ebb"
   dependencies:
-    "@0xproject/assert" "^1.0.0"
-    "@0xproject/json-schemas" "^1.0.0-rc.1"
-    "@0xproject/sol-resolver" "^1.0.0"
-    "@0xproject/types" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    "@0xproject/web3-wrapper" "^1.0.0"
-    "@types/yargs" "^11.0.0"
-    chalk "^2.3.0"
-    ethereum-types "^1.0.0"
-    ethereumjs-util "^5.1.1"
-    lodash "^4.17.4"
-    mkdirp "^0.5.1"
-    require-from-string "^2.0.1"
-    semver "5.5.0"
-    solc "^0.4.23"
-    web3-eth-abi "^1.0.0-beta.24"
-    yargs "^10.0.3"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/base-contract" "^2.0.0"
+    "@0xproject/contract-wrappers" "^1.0.1-rc.4"
+    "@0xproject/fill-scenarios" "^1.0.1-rc.4"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/order-utils" "^1.0.1-rc.4"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
+    bintrees "^1.0.2"
+    ethereum-types "^1.0.5"
+    ethereumjs-blockstream "5.0.0"
+    ethers "3.0.22"
+    lodash "^4.17.5"
 
-"@0xproject/sol-compiler@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/sol-compiler/-/sol-compiler-1.0.5.tgz#efa5973f08a0c7ec81a47754f7f39f39684a55f2"
+"@0xproject/sol-compiler@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@0xproject/sol-compiler/-/sol-compiler-1.1.0.tgz#882e94c2beb0319cca7bbd044744aaf00074b2bb"
   dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/json-schemas" "^1.0.1-rc.4"
-    "@0xproject/sol-resolver" "^1.0.5"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/sol-resolver" "^1.0.6"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
     "@types/yargs" "^11.0.0"
     chalk "^2.3.0"
-    ethereum-types "^1.0.4"
+    ethereum-types "^1.0.5"
     ethereumjs-util "^5.1.1"
     lodash "^4.17.5"
     mkdirp "^0.5.1"
@@ -211,64 +178,30 @@
     web3-eth-abi "^1.0.0-beta.24"
     yargs "^10.0.3"
 
-"@0xproject/sol-resolver@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/sol-resolver/-/sol-resolver-1.0.0.tgz#b2f06cfc0e52b7b6dc36fe047de57fad40f1489e"
+"@0xproject/sol-resolver@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@0xproject/sol-resolver/-/sol-resolver-1.0.6.tgz#1ffbd64471803cc8745b94177561bc4a61af3d39"
   dependencies:
-    "@0xproject/types" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    lodash "^4.17.4"
-
-"@0xproject/sol-resolver@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/sol-resolver/-/sol-resolver-1.0.5.tgz#73a222c4146abb4d3379f5f342b3347e3cfbba77"
-  dependencies:
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
     lodash "^4.17.5"
 
-"@0xproject/subproviders@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/subproviders/-/subproviders-1.0.0.tgz#5d1b03d12e405ef1cd428b7ab6ddc54ec62da0f0"
+"@0xproject/subproviders@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@0xproject/subproviders/-/subproviders-2.0.0.tgz#755c4b5f5637d4922b586567f908e281cb449e26"
   dependencies:
-    "@0xproject/assert" "^1.0.0"
-    "@0xproject/types" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    "@0xproject/web3-wrapper" "^1.0.0"
-    "@ledgerhq/hw-app-eth" "^4.3.0"
-    "@ledgerhq/hw-transport-u2f" "^4.3.0"
-    bip39 "^2.5.0"
-    bn.js "^4.11.8"
-    eth-lightwallet "^3.0.1"
-    ethereum-types "^1.0.0"
-    ethereumjs-tx "^1.3.5"
-    ethereumjs-util "^5.1.1"
-    ganache-core "0xProject/ganache-core"
-    hdkey "^0.7.1"
-    json-rpc-error "2.0.0"
-    lodash "^4.17.4"
-    semaphore-async-await "^1.5.1"
-    web3-provider-engine "14.0.6"
-  optionalDependencies:
-    "@ledgerhq/hw-transport-node-hid" "^4.3.0"
-
-"@0xproject/subproviders@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/subproviders/-/subproviders-1.0.5.tgz#3c6044651ee2b86f7070e40a653495ed5df55087"
-  dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    "@0xproject/web3-wrapper" "^1.2.0"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    "@0xproject/web3-wrapper" "^2.0.0"
     "@ledgerhq/hw-app-eth" "^4.3.0"
     "@ledgerhq/hw-transport-u2f" "^4.3.0"
     "@types/hdkey" "^0.7.0"
     bip39 "^2.5.0"
     bn.js "^4.11.8"
     eth-lightwallet "^3.0.1"
-    ethereum-types "^1.0.4"
+    ethereum-types "^1.0.5"
     ethereumjs-tx "^1.3.5"
     ethereumjs-util "^5.1.1"
     ganache-core "0xProject/ganache-core#monorepo-dep"
@@ -290,94 +223,50 @@
     tslint-react "^3.2.0"
     tsutils "2.22.2"
 
-"@0xproject/types@^1.0.0-rc.1":
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@0xproject/types/-/types-1.0.0-rc.1.tgz#5e9fdc9174ea076ae91203c998d68962ed3f92aa"
+"@0xproject/types@^1.0.1-rc.5":
+  version "1.0.1-rc.5"
+  resolved "https://registry.yarnpkg.com/@0xproject/types/-/types-1.0.1-rc.5.tgz#4c403a2fc8795e45034bda2b0e588a77c2767ea2"
   dependencies:
     "@types/node" "^8.0.53"
     bignumber.js "~4.1.0"
-    ethereum-types "^1.0.0"
+    ethereum-types "^1.0.5"
 
-"@0xproject/types@^1.0.1-rc.4":
-  version "1.0.1-rc.4"
-  resolved "https://registry.yarnpkg.com/@0xproject/types/-/types-1.0.1-rc.4.tgz#b34422918aec7743dc703329ec69229703af3f60"
-  dependencies:
-    "@types/node" "^8.0.53"
-    bignumber.js "~4.1.0"
-    ethereum-types "^1.0.4"
-
-"@0xproject/typescript-typings@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/typescript-typings/-/typescript-typings-1.0.0.tgz#c141ad30a3e6021f7928d6b84a4c03897c34f9f3"
-  dependencies:
-    bignumber.js "~4.1.0"
-    ethereum-types "^1.0.0"
-
-"@0xproject/typescript-typings@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@0xproject/typescript-typings/-/typescript-typings-1.0.4.tgz#ba69ccfeed76844cc993877e9c903365f4e0aa72"
+"@0xproject/typescript-typings@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@0xproject/typescript-typings/-/typescript-typings-1.0.5.tgz#a808443419f26a7b90d63d1afd3efbfb48644184"
   dependencies:
     "@types/bn.js" "^4.11.0"
     "@types/react" "*"
     bignumber.js "~4.1.0"
-    ethereum-types "^1.0.4"
+    ethereum-types "^1.0.5"
     popper.js "1.14.3"
 
-"@0xproject/utils@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/utils/-/utils-1.0.0.tgz#ff6cdbcbe031faced0e1529d08084ebcc95f11d3"
+"@0xproject/utils@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@0xproject/utils/-/utils-1.0.6.tgz#7b84a9eb063442838d48d12c02678f48bdb7c6f4"
   dependencies:
-    "@0xproject/types" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@types/node" "^8.0.53"
-    bignumber.js "~4.1.0"
-    detect-node "2.0.3"
-    ethereum-types "^1.0.0"
-    ethereumjs-util "^5.1.1"
-    ethers "3.0.22"
-    isomorphic-fetch "^2.2.1"
-    js-sha3 "^0.7.0"
-    lodash "^4.17.4"
-
-"@0xproject/utils@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/utils/-/utils-1.0.5.tgz#53dedf268d46ce1390c83ed9bfe9566821ef77d0"
-  dependencies:
-    "@0xproject/types" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
+    "@0xproject/types" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
     "@types/node" "^8.0.53"
     abortcontroller-polyfill "^1.1.9"
     bignumber.js "~4.1.0"
     detect-node "2.0.3"
-    ethereum-types "^1.0.4"
+    ethereum-types "^1.0.5"
     ethereumjs-util "^5.1.1"
     ethers "3.0.22"
     isomorphic-fetch "^2.2.1"
     js-sha3 "^0.7.0"
     lodash "^4.17.5"
 
-"@0xproject/web3-wrapper@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/web3-wrapper/-/web3-wrapper-1.0.0.tgz#24bd81086f90c595f18bcf5872bd2e90e12531fe"
+"@0xproject/web3-wrapper@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@0xproject/web3-wrapper/-/web3-wrapper-2.0.0.tgz#c6d477e5488e538081c0835bfd764bdde2d8df9e"
   dependencies:
-    "@0xproject/assert" "^1.0.0"
-    "@0xproject/json-schemas" "^1.0.0-rc.1"
-    "@0xproject/typescript-typings" "^1.0.0"
-    "@0xproject/utils" "^1.0.0"
-    ethereum-types "^1.0.0"
-    ethereumjs-util "^5.1.1"
-    ethers "3.0.22"
-    lodash "^4.17.4"
-
-"@0xproject/web3-wrapper@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/web3-wrapper/-/web3-wrapper-1.2.0.tgz#ef653f3c18eb5f2954cd911d90a05aa887a64aee"
-  dependencies:
-    "@0xproject/assert" "^1.0.5"
-    "@0xproject/json-schemas" "^1.0.1-rc.4"
-    "@0xproject/typescript-typings" "^1.0.4"
-    "@0xproject/utils" "^1.0.5"
-    ethereum-types "^1.0.4"
+    "@0xproject/assert" "^1.0.6"
+    "@0xproject/json-schemas" "^1.0.1-rc.5"
+    "@0xproject/typescript-typings" "^1.0.5"
+    "@0xproject/utils" "^1.0.6"
+    ethereum-types "^1.0.5"
     ethereumjs-util "^5.1.1"
     ethers "3.0.22"
     lodash "^4.17.5"
@@ -446,8 +335,8 @@
     csstype "^2.2.0"
 
 "@types/yargs@^11.0.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-11.1.0.tgz#923caa0cca53745d83f139eeff4fa7906c52ebce"
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-11.1.1.tgz#2e724257167fd6b615dbe4e54301e65fe597433f"
 
 abortcontroller-polyfill@^1.1.9:
   version "1.1.9"
@@ -494,9 +383,9 @@ aes-js@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-3.0.0.tgz#e21df10ad6c2053295bcbb8dab40b09dbea87e4d"
 
-aes-js@^0.2.3:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-0.2.4.tgz#94b881ab717286d015fa219e08fb66709dda5a3d"
+aes-js@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-3.1.1.tgz#89fd1f94ae51b4c72d62466adc1a7323ff52f072"
 
 ajv@^5.1.0:
   version "5.5.2"
@@ -1115,10 +1004,6 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
-base-x@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/base-x/-/base-x-1.1.0.tgz#42d3d717474f9ea02207f6d1aa1f426913eeb7ac"
-
 base-x@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.4.tgz#94c1788736da065edb1d68808869e357c977fa77"
@@ -1150,6 +1035,10 @@ bignumber.js@~4.1.0:
 bindings@^1.2.1, bindings@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.3.0.tgz#b346f6ecf6a95f5a815c5839fc7cdb22502f1ed7"
+
+bintrees@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bintrees/-/bintrees-1.0.2.tgz#49f896d6e858a4a499df85c38fb399b9aff840f8"
 
 bip39@^2.5.0:
   version "2.5.0"
@@ -1341,7 +1230,7 @@ browserslist@^3.2.6:
     caniuse-lite "^1.0.30000844"
     electron-to-chromium "^1.3.47"
 
-bs58@=4.0.1:
+bs58@=4.0.1, bs58@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-4.0.1.tgz#be161e76c354f6f788ae4071f63f34e8c4f0a42a"
   dependencies:
@@ -1351,18 +1240,13 @@ bs58@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-2.0.1.tgz#55908d58f1982aba2008fa1bed8f91998a29bf8d"
 
-bs58@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/bs58/-/bs58-3.1.0.tgz#d4c26388bf4804cac714141b1945aa47e5eb248e"
+bs58check@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-2.1.2.tgz#53b018291228d82a5aa08e7d796fdafda54aebfc"
   dependencies:
-    base-x "^1.1.0"
-
-bs58check@^1.0.8:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-1.3.4.tgz#c52540073749117714fa042c3047eb8f9151cbf8"
-  dependencies:
-    bs58 "^3.1.0"
+    bs58 "^4.0.0"
     create-hash "^1.1.0"
+    safe-buffer "^5.1.2"
 
 buffer-alloc-unsafe@^1.1.0:
   version "1.1.0"
@@ -2319,23 +2203,9 @@ ethereum-common@^0.0.18:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/ethereum-common/-/ethereum-common-0.0.18.tgz#2fdc3576f232903358976eb39da783213ff9523f"
 
-ethereum-types@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/ethereum-types/-/ethereum-types-0.0.2.tgz#6ef6faf46a24697cbf66b6c8a0ecf2095ce58c38"
-  dependencies:
-    "@types/node" "^8.0.53"
-    bignumber.js "~4.1.0"
-
-ethereum-types@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ethereum-types/-/ethereum-types-1.0.0.tgz#c9b0148c763479a70d037c9ac429fc6e44f00aba"
-  dependencies:
-    "@types/node" "^8.0.53"
-    bignumber.js "~4.1.0"
-
-ethereum-types@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/ethereum-types/-/ethereum-types-1.0.4.tgz#ad4158a0efd8a2ba9d8d693bad4ee8411128785c"
+ethereum-types@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/ethereum-types/-/ethereum-types-1.0.5.tgz#4d2541d9fe90adf5969503eb90315d1f8340fde7"
   dependencies:
     "@types/node" "^8.0.53"
     bignumber.js "~4.1.0"
@@ -2404,7 +2274,7 @@ ethereumjs-tx@^1.3.5:
     ethereum-common "^0.0.18"
     ethereumjs-util "^5.0.0"
 
-ethereumjs-util@^4.0.1, ethereumjs-util@^4.4.0:
+ethereumjs-util@^4.0.1:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-4.5.0.tgz#3e9428b317eebda3d7260d854fddda954b1f1bc6"
   dependencies:
@@ -2458,17 +2328,18 @@ ethereumjs-vm@2.3.5, ethereumjs-vm@^2.0.2, ethereumjs-vm@^2.1.0, ethereumjs-vm@^
     rustbn.js "~0.1.1"
     safe-buffer "^5.1.1"
 
-ethereumjs-wallet@0.6.0, ethereumjs-wallet@~0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/ethereumjs-wallet/-/ethereumjs-wallet-0.6.0.tgz#82763b1697ee7a796be7155da9dfb49b2f98cfdb"
+ethereumjs-wallet@~0.6.0:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/ethereumjs-wallet/-/ethereumjs-wallet-0.6.2.tgz#67244b6af3e8113b53d709124b25477b64aeccda"
   dependencies:
-    aes-js "^0.2.3"
-    bs58check "^1.0.8"
-    ethereumjs-util "^4.4.0"
-    hdkey "^0.7.0"
+    aes-js "^3.1.1"
+    bs58check "^2.1.2"
+    ethereumjs-util "^5.2.0"
+    hdkey "^1.0.0"
+    safe-buffer "^5.1.2"
     scrypt.js "^0.2.0"
-    utf8 "^2.1.1"
-    uuid "^2.0.1"
+    utf8 "^3.0.0"
+    uuid "^3.3.2"
 
 ethers@3.0.22:
   version "3.0.22"
@@ -2768,43 +2639,6 @@ ganache-cli@^6.1.6:
   dependencies:
     source-map-support "^0.5.3"
 
-ganache-core@0xProject/ganache-core:
-  version "2.1.2"
-  resolved "https://codeload.github.com/0xProject/ganache-core/tar.gz/88ce33a4c33a5737ffb84af9bb8affaa4e8bf3a5"
-  dependencies:
-    abstract-leveldown "^3.0.0"
-    async "^2.5.0"
-    bip39 "~2.4.0"
-    bn.js "4.11.6"
-    cachedown "^1.0.0"
-    chai "^3.5.0"
-    clone "^2.1.1"
-    ethereumjs-account "~2.0.4"
-    ethereumjs-block "~1.2.2"
-    ethereumjs-tx "0xProject/ethereumjs-tx#fake-tx-include-signature-by-default"
-    ethereumjs-util "^5.2.0"
-    ethereumjs-vm "2.3.5"
-    ethereumjs-wallet "~0.6.0"
-    fake-merkle-patricia-tree "~1.0.1"
-    heap "~0.2.6"
-    js-scrypt "^0.2.0"
-    level-sublevel "^6.6.1"
-    levelup "^1.1.0"
-    localstorage-down "^0.6.7"
-    lodash "^4.17.5"
-    merkle-patricia-tree "^2.2.0"
-    pify "^3.0.0"
-    prepend-file "^1.3.1"
-    seedrandom "~2.4.2"
-    shebang-loader "0.0.1"
-    solc "0.4.24"
-    temp "^0.8.3"
-    tmp "0.0.31"
-    web3 "^1.0.0-beta.34"
-    web3-provider-engine "^14.0.6"
-    websocket "^1.0.24"
-    yargs "^7.0.2"
-
 ganache-core@0xProject/ganache-core#monorepo-dep:
   version "2.1.2"
   resolved "https://codeload.github.com/0xProject/ganache-core/tar.gz/9f86ca3d114ee4395e2d16362f95a8c57ec69bb4"
@@ -2821,7 +2655,7 @@ ganache-core@0xProject/ganache-core#monorepo-dep:
     ethereumjs-tx "0xProject/ethereumjs-tx#fake-tx-include-signature-by-default"
     ethereumjs-util "^5.2.0"
     ethereumjs-vm "2.3.5"
-    ethereumjs-wallet "0.6.0"
+    ethereumjs-wallet "~0.6.0"
     fake-merkle-patricia-tree "~1.0.1"
     heap "~0.2.6"
     js-scrypt "^0.2.0"
@@ -3016,11 +2850,19 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.0"
 
-hdkey@^0.7.0, hdkey@^0.7.1:
+hdkey@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/hdkey/-/hdkey-0.7.1.tgz#caee4be81aa77921e909b8d228dd0f29acaee632"
   dependencies:
     coinstring "^2.0.0"
+    secp256k1 "^3.0.1"
+
+hdkey@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/hdkey/-/hdkey-1.1.0.tgz#e74e7b01d2c47f797fa65d1d839adb7a44639f29"
+  dependencies:
+    coinstring "^2.0.0"
+    safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
 heap@~0.2.6:
@@ -3791,9 +3633,13 @@ mz@^2.6.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@2.10.0, nan@>=2.5.1, nan@^2.0.8, nan@^2.2.1, nan@^2.3.3, nan@^2.6.2:
+nan@2.10.0, nan@^2.0.8, nan@^2.2.1, nan@^2.3.3, nan@^2.6.2:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
+
+nan@>=2.5.1:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.11.0.tgz#574e360e4d954ab16966ec102c0c049fd961a099"
 
 nano-json-stream-parser@^0.1.2:
   version "0.1.2"
@@ -4573,7 +4419,7 @@ safe-buffer@5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
-safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
 
@@ -4785,8 +4631,8 @@ slash@^1.0.0:
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
 
 sleep@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/sleep/-/sleep-5.1.1.tgz#878fa1d44d08eeb0f26fb2018ef8629eb1a3ab94"
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/sleep/-/sleep-5.2.3.tgz#be8852dd8cf91c8f206d21d681c64754cbceb33c"
   dependencies:
     nan ">=2.5.1"
 
@@ -4826,8 +4672,8 @@ source-map-support@^0.4.15:
     source-map "^0.5.6"
 
 source-map-support@^0.5.0:
-  version "0.5.8"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.8.tgz#04f5581713a8a65612d0175fbf3a01f80a162613"
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.9.tgz#41bc953b2534267ea2d605bccfa7bfa3111ced5f"
   dependencies:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
@@ -5396,6 +5242,10 @@ utf8@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/utf8/-/utf8-2.1.2.tgz#1fa0d9270e9be850d9b05027f63519bf46457d96"
 
+utf8@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/utf8/-/utf8-3.0.0.tgz#f052eed1364d696e769ef058b183df88c87f69d1"
+
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -5412,13 +5262,13 @@ uuid@3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
-uuid@^2.0.1:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
-
 uuid@^3.1.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.0.tgz#b237147804881d7b86f40a7ff8f590f15c37de32"
+
+uuid@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
 
 valid-url@^1.0.9:
   version "1.0.9"
@@ -5465,6 +5315,14 @@ web3-core-helpers@1.0.0-beta.34:
     web3-eth-iban "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
+web3-core-helpers@1.0.0-beta.35:
+  version "1.0.0-beta.35"
+  resolved "https://registry.yarnpkg.com/web3-core-helpers/-/web3-core-helpers-1.0.0-beta.35.tgz#d681d218a0c6e3283ee1f99a078ab9d3eef037f1"
+  dependencies:
+    underscore "1.8.3"
+    web3-eth-iban "1.0.0-beta.35"
+    web3-utils "1.0.0-beta.35"
+
 web3-core-method@1.0.0-beta.34:
   version "1.0.0-beta.34"
   resolved "https://registry.yarnpkg.com/web3-core-method/-/web3-core-method-1.0.0-beta.34.tgz#ec163c8a2c490fa02a7ec15559fa7307fc7cc6dd"
@@ -5509,7 +5367,7 @@ web3-core@1.0.0-beta.34:
     web3-core-requestmanager "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
-web3-eth-abi@1.0.0-beta.34, web3-eth-abi@^1.0.0-beta.24:
+web3-eth-abi@1.0.0-beta.34:
   version "1.0.0-beta.34"
   resolved "https://registry.yarnpkg.com/web3-eth-abi/-/web3-eth-abi-1.0.0-beta.34.tgz#034533e3aa2f7e59ff31793eaea685c0ed5af67a"
   dependencies:
@@ -5517,6 +5375,15 @@ web3-eth-abi@1.0.0-beta.34, web3-eth-abi@^1.0.0-beta.24:
     underscore "1.8.3"
     web3-core-helpers "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
+
+web3-eth-abi@^1.0.0-beta.24:
+  version "1.0.0-beta.35"
+  resolved "https://registry.yarnpkg.com/web3-eth-abi/-/web3-eth-abi-1.0.0-beta.35.tgz#2eb9c1c7c7233db04010defcb192293e0db250e6"
+  dependencies:
+    bn.js "4.11.6"
+    underscore "1.8.3"
+    web3-core-helpers "1.0.0-beta.35"
+    web3-utils "1.0.0-beta.35"
 
 web3-eth-accounts@1.0.0-beta.34:
   version "1.0.0-beta.34"
@@ -5553,6 +5420,13 @@ web3-eth-iban@1.0.0-beta.34:
     bn.js "4.11.6"
     web3-utils "1.0.0-beta.34"
 
+web3-eth-iban@1.0.0-beta.35:
+  version "1.0.0-beta.35"
+  resolved "https://registry.yarnpkg.com/web3-eth-iban/-/web3-eth-iban-1.0.0-beta.35.tgz#5aa10327a9abb26bcfc4ba79d7bad18a002b332c"
+  dependencies:
+    bn.js "4.11.6"
+    web3-utils "1.0.0-beta.35"
+
 web3-eth-personal@1.0.0-beta.34:
   version "1.0.0-beta.34"
   resolved "https://registry.yarnpkg.com/web3-eth-personal/-/web3-eth-personal-1.0.0-beta.34.tgz#9afba167342ebde5420bcd5895c3f6c34388f205"
@@ -5588,7 +5462,7 @@ web3-net@1.0.0-beta.34:
     web3-core-method "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
-web3-provider-engine@14.0.6, web3-provider-engine@^14.0.4, web3-provider-engine@^14.0.6:
+web3-provider-engine@14.0.6, web3-provider-engine@^14.0.6:
   version "14.0.6"
   resolved "https://registry.yarnpkg.com/web3-provider-engine/-/web3-provider-engine-14.0.6.tgz#cbdd66fe20c0136a3a495cbe40d18b6c4160d5f0"
   dependencies:
@@ -5673,6 +5547,18 @@ web3-shh@1.0.0-beta.34:
 web3-utils@1.0.0-beta.34:
   version "1.0.0-beta.34"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.34.tgz#9411fc39aaef39ca4e06169f762297d9ff020970"
+  dependencies:
+    bn.js "4.11.6"
+    eth-lib "0.1.27"
+    ethjs-unit "0.1.6"
+    number-to-bn "1.7.0"
+    randomhex "0.1.5"
+    underscore "1.8.3"
+    utf8 "2.1.1"
+
+web3-utils@1.0.0-beta.35:
+  version "1.0.0-beta.35"
+  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.35.tgz#ced9e1df47c65581c441c5f2af76b05a37a273d7"
   dependencies:
     bn.js "4.11.6"
     eth-lib "0.1.27"

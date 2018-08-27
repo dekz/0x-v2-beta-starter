@@ -1,7 +1,8 @@
-import { ZeroEx } from '0x.js';
-import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from './constants';
-import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
+import { ERC20TokenWrapper } from '0x.js';
 import { BigNumber } from '@0xproject/utils';
+import { Web3Wrapper } from '@0xproject/web3-wrapper';
+import { TransactionReceiptWithDecodedLogs } from 'ethereum-types';
+import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from './constants';
 import ora = require('ora');
 
 const Table = require('cli-table');
@@ -93,7 +94,7 @@ export function printData(header: string, tableData: string[][]): void {
 export async function fetchAndPrintContractBalancesAsync(
     accountDetails: {},
     contractAddresses: { [tokenSymbol: string]: string },
-    zeroEx: ZeroEx,
+    erc20TokenWrapper: ERC20TokenWrapper,
 ): Promise<void> {
     const flattenedBalances = [];
     const flattenedAccounts = Object.keys(accountDetails).map(
@@ -104,7 +105,7 @@ export async function fetchAndPrintContractBalancesAsync(
         const tokenAddress = contractAddresses[tokenSymbol];
         for (const account in accountDetails) {
             const address = accountDetails[account];
-            const balance = await zeroEx.erc20Token.getBalanceAsync(tokenAddress, address);
+            const balance = await erc20TokenWrapper.getBalanceAsync(tokenAddress, address);
             balances.push(balance.toString());
         }
         flattenedBalances.push(balances);
@@ -119,16 +120,16 @@ export async function fetchAndPrintContractBalancesAsync(
 
 export async function fetchAndPrintERC721Owner(
     accountDetails: {},
-    erc721Contract: any,
+    erc721TokenWrapper: any,
     tokenId: BigNumber,
 ): Promise<void> {
     const flattenedBalances = [];
     const flattenedAccounts = Object.keys(accountDetails).map(
         account => account.charAt(0).toUpperCase() + account.slice(1),
     );
-    const tokenSymbol = await erc721Contract.symbol.callAsync();
+    const tokenSymbol = await erc721TokenWrapper.symbol.callAsync();
     const balances = [tokenSymbol];
-    const owner = await erc721Contract.ownerOf.callAsync(tokenId);
+    const owner = await erc721TokenWrapper.ownerOf.callAsync(tokenId);
     for (const account in accountDetails) {
         const address = accountDetails[account];
         const balance = owner === address ? erc721Icon : '';
@@ -147,7 +148,7 @@ export async function fetchAndPrintContractAllowancesAsync(
     accountDetails: {},
     contractAddresses: { [tokenSymbol: string]: string },
     spender: string,
-    zeroEx: ZeroEx,
+    erc20TokenWrapper: ERC20TokenWrapper,
 ): Promise<void> {
     const flattenedAllowances = [];
     const flattenedAccounts = Object.keys(accountDetails).map(
@@ -158,7 +159,7 @@ export async function fetchAndPrintContractAllowancesAsync(
         const tokenAddress = contractAddresses[tokenSymbol];
         for (const account in accountDetails) {
             const address = accountDetails[account];
-            const balance = await zeroEx.erc20Token.getAllowanceAsync(tokenAddress, address, spender);
+            const balance = await erc20TokenWrapper.getAllowanceAsync(tokenAddress, address, spender);
             allowances.push(balance.toString());
         }
         flattenedAllowances.push(allowances);
@@ -174,14 +175,14 @@ export async function fetchAndPrintContractAllowancesAsync(
 export async function awaitTransactionMinedSpinnerAsync(
     message: string,
     txHash: string,
-    zeroEx: ZeroEx,
+    web3Wrapper: Web3Wrapper,
 ): Promise<TransactionReceiptWithDecodedLogs> {
     const spinner = ora(`${message}: ${txHash}`).start();
     if (!spinner['isSpinning']) {
         console.log(message, txHash);
     }
     try {
-        const receipt = await zeroEx.awaitTransactionMinedAsync(txHash);
+        const receipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
         receipt.status === 1 ? spinner.stop() : spinner.fail(message);
         return receipt;
     } catch (e) {

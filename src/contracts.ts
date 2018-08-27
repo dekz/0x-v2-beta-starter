@@ -1,9 +1,7 @@
 import { MnemonicWalletSubprovider } from '@0xproject/subproviders';
 import { artifacts } from './artifacts';
 import { BASE_DERIVATION_PATH, NETWORK_ID, RPC_URL, MNEMONIC, GANACHE_NETWORK_ID } from './constants';
-import { ExchangeContract } from './contract_wrappers/exchange';
 import { ForwarderContract } from './contract_wrappers/forwarder';
-import { ZRXTokenContract } from './contract_wrappers/zrx_token';
 import { DummyERC20TokenContract } from './contract_wrappers/dummy_erc20_token';
 import { DummyERC721TokenContract } from './contract_wrappers/dummy_erc721_token';
 
@@ -21,17 +19,6 @@ providerEngine.addProvider(new RpcSubprovider({ rpcUrl: RPC_URL }));
 providerEngine.start();
 
 // Extract the Proxy addresses
-export const zrxTokenAddress = artifacts.ZRX.networks[NETWORK_ID].address;
-export const exchangeContract = new ExchangeContract(
-    artifacts.Exchange.compilerOutput.abi,
-    artifacts.Exchange.networks[NETWORK_ID].address,
-    providerEngine,
-);
-export const zrxTokenContract = new ZRXTokenContract(
-    artifacts.ZRX.compilerOutput.abi,
-    artifacts.ZRX.networks[NETWORK_ID].address,
-    providerEngine,
-);
 export const forwarderContract = new ForwarderContract(
     artifacts.Forwarder.compilerOutput.abi,
     artifacts.Forwarder.networks[NETWORK_ID].address,
