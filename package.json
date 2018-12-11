@@ -64,7 +64,7 @@
         "bulma": "^0.7.1",
         "chai": "^4.0.1",
         "chai-as-promised": "^7.1.0",
-        "chai-bignumber": "^2.0.1",
+        "chai-bignumber": "^3.0.0",
         "cross-env": "^5.1.4",
         "dirty-chai": "^2.0.1",
         "download-cli": "^1.0.5",
