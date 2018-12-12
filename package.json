@@ -41,7 +41,7 @@
         "@0xproject/order-utils": "^1.0.1-rc.2",
         "@0xproject/sol-compiler": "^1.0.0",
         "@0xproject/subproviders": "^1.0.0",
-        "@0xproject/tslint-config": "^1.0.0",
+        "@0xproject/tslint-config": "^1.0.8",
         "@0xproject/types": "^1.0.0-rc.1",
         "@0xproject/typescript-typings": "^1.0.0",
         "@0xproject/utils": "^1.0.0",
