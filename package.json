@@ -58,7 +58,7 @@
     },
     "devDependencies": {
         "@0xproject/dev-utils": "^1.0.0",
-        "@types/react": "^16.4.6",
+        "@types/react": "^16.8.2",
         "@types/react-dom": "^16.0.6",
         "bloomer": "^0.6.3",
         "bulma": "^0.7.1",
